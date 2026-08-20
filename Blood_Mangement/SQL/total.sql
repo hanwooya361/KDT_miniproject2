@@ -1,0 +1,213 @@
+drop database if exists BloodMangement;
+create database BloodMangement;
+use BloodMangement;
+
+CREATE TABLE member (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,
+    login_id VARCHAR(30) NOT NULL UNIQUE,
+    name VARCHAR(30) NOT NULL,
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    member_type VARCHAR(20) NOT NULL,
+    mcreated_at DATE
+);
+
+CREATE TABLE donation_history (
+    donation_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    donation_date DATE,
+    created_at DATE,
+    CONSTRAINT fk_donation_member
+        FOREIGN KEY (member_id)
+        REFERENCES member(member_id)
+);
+
+CREATE TABLE blood_pack (
+    blood_pack_id INT AUTO_INCREMENT PRIMARY KEY,
+    blood_type VARCHAR(3),
+    donation_id INT NOT NULL,
+    received_date DATE,
+    expiration_date DATE,
+    shipment_date DATE DEFAULT 'NULL',
+    status DEFAULT '보관중',
+    CONSTRAINT fk_blood_pack_donation
+        FOREIGN KEY (donation_id)
+        REFERENCES donation_history(donation_id)
+);
+
+
+CREATE TABLE transfusion_request (
+    request_id INT PRIMARY KEY,
+    requester_id INT NOT NULL,
+    request_type VARCHAR(20),
+    patient_name VARCHAR(30),
+    hospital_name VARCHAR(100),
+    blood_type VARCHAR(3),
+    requested_quantity INT,
+    deadline DATE,
+    status DEFAULT '대기중',
+    created_at DATE,
+    CONSTRAINT fk_request_member
+        FOREIGN KEY (requester_id)
+        REFERENCES member(member_id)
+);
+
+CREATE TABLE matching (
+    matching_detail_id INT PRIMARY KEY,
+    member_id INT NOT NULL,
+    blood_pack_id INT NOT NULL,
+
+    CONSTRAINT fk_matching_shipment
+        FOREIGN KEY (member_id)
+        REFERENCES shipment(member_id),
+
+    CONSTRAINT fk_matching_blood_pack
+        FOREIGN KEY (blood_pack_id)
+        REFERENCES blood_pack(blood_pack_id)
+);
+
+
+INSERT INTO member
+(member_id, login_id, name, phone, member_type, mcreated_at)
+VALUES
+(1, 'hong123', '조현우', '010-1234-5678', '헌혈자', '2026-08-16'),
+
+(2, 'kim123', '최윤성', '010-2222-3333', '수혈자', '2026-08-17'),
+
+(3, 'seou01', '구현승', '010-3333-4444', '헌혈자', '2026-08-17'),
+
+(4, 'park77', '최정우', '010-4444-5555', '헌혈자', '2026-08-18'),
+
+(5, 'lee100', '이서연', '010-5555-6666', '수혈자', '2026-08-18'),
+
+(6, 'choi88', '김도윤', '010-6666-7777', '헌혈자', '2026-08-18'),
+
+(7, 'minji22', '김민지', '010-7777-8888', '헌혈자', '2026-08-19'),
+
+(8, 'jpark55', '정지훈', '010-8888-9999', '수혈자', '2026-08-19'),
+
+(9, 'sora33', '한소라', '010-9999-0000', '헌혈자', '2026-08-19'),
+
+(10, 'yoon10', '윤지호', '010-1111-2222', '헌혈자', '2026-08-19');
+
+
+
+INSERT INTO donation_history
+(donation_id, member_id, donation_date, created_at)
+VALUES
+(10001, 1, '2026-08-18', '2026-08-18'),
+
+(10002, 3, '2026-08-18', '2026-08-19'),
+
+(10003, 4, '2026-08-18', '2026-08-20'),
+
+(10004, 6, '2026-08-18', '2026-08-21'),
+
+(10005, 7, '2026-08-18', '2026-08-22'),
+
+(10006, 9, '2026-08-18', '2026-08-23'),
+
+(10007, 10, '2026-08-19', '2026-08-24'),
+
+(10008, 1, '2026-08-19', '2026-08-25'),
+
+(10009, 3, '2026-08-19', '2026-08-26'),
+
+(10010, 4, '2026-08-19', '2026-08-27');
+
+
+INSERT INTO blood_pack
+(blood_pack_id, blood_type, donation_id, expiration_date,
+ received_date, shipment_date, status)
+VALUES
+
+(20001, 'O+', 10001, '2026-09-17',
+ '2026-08-18', '2026-08-19', '보관중'),
+
+(20002, 'A+', 10002, '2026-09-17',
+ '2026-08-18', '2026-08-19', '보관중'),
+
+(20003, 'B+', 10003, '2026-09-17',
+ '2026-08-18', '2026-08-19', '출고완료'),
+
+(20004, 'A+', 10004, '2026-09-17',
+ '2026-08-18', '2026-08-19', '보관중'),
+
+(20005, 'O-', 10005, '2026-09-17',
+ '2026-08-18', '2026-08-19', '출고완료'),
+
+(20006, 'AB-', 10006, '2026-09-17',
+ '2026-08-18', '2026-08-19', '보관중'),
+
+(20007, 'O+', 10007, '2026-09-18',
+ '2026-08-19', '2026-08-19', '보관중'),
+
+(20008, 'O+', 10008, '2026-09-18',
+ '2026-08-19', '2026-08-19', '보관중'),
+
+(20009, 'A+', 10009, '2026-09-18',
+ '2026-08-19', '2026-08-19', '출고완료'),
+
+(20010, 'B+', 10010, '2026-09-18',
+ '2026-08-19', '2026-08-19', '보관중');
+
+
+INSERT INTO transfusion_request
+(request_id, requester_id, request_type, patient_name,
+ hospital_name, blood_type, requested_quantity,
+ deadline, status, created_at)
+VALUES
+
+(30001, 2, '지정헌혈', '김철수', '서울병원',
+ 'O+', 3, '2026-08-22', '대기중', '2026-08-18'),
+
+(30002, 5, '지정헌혈', '박영희', '부산병원',
+ 'A+', 2, '2026-08-21', '대기중', '2026-08-19'),
+
+(30003, 3, '혈액요청', '최민호', '서울병원',
+ 'B+', 5, '2026-08-20', '완료', '2026-08-20'),
+
+(30004, 8, '혈액요청', '정수진', '인천병원',
+ 'O-', 2, '2026-08-23', '대기중', '2026-08-21'),
+
+(30005, 2, '지정헌혈', '이현우', '대전병원',
+ 'O+', 4, '2026-08-24', '대기중', '2026-08-22'),
+
+(30006, 5, '혈액요청', '김예은', '서울병원',
+ 'AB+', 1, '2026-08-22', '대기중', '2026-08-23'),
+
+(30007, 8, '혈액요청', '장도현', '부산병원',
+ 'O+', 3, '2026-08-25', '대기중', '2026-08-24'),
+
+(30008, 2, '지정헌혈', '윤서준', '서울병원',
+ 'A+', 2, '2026-08-20', '완료', '2026-08-25'),
+
+(30009, 5, '혈액요청', '한지민', '인천병원',
+ 'AB+', 2, '2026-08-26', '대기중', '2026-08-26'),
+
+(30010, 3, '혈액요청', '송지훈', '대전병원',
+ 'B+', 1, '2026-08-27', '대기중', '2026-08-27');
+
+
+INSERT INTO matching
+(matching_detail_id, member_id, blood_pack_id)
+VALUES
+
+(50001, 1, 20001),
+
+(50002, 3, 20003),
+
+(50003, 4, 20007),
+
+(50004, 6, 20002),
+
+(50005, 7, 20005),
+
+(50006, 9, 20004),
+
+(50007, 10, 20008),
+
+(50008, 1, 20006),
+
+(50009, 3, 20010),
+
+(50010, 4, 20009);
