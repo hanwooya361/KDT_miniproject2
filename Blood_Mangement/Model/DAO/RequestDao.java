@@ -1,0 +1,14 @@
+package Blood_Mangement.Model.DAO;
+
+import java.util.ArrayList;
+import Blood_Mangement.DTO.RequestDto;
+
+public class RequestDao {
+    private RequestDao() {}
+    private static final RequestDao instance = new RequestDao();
+    public static RequestDao getInstance() { return instance; }
+
+    private ArrayList <RequestDto> rlist = new ArrayList<>();
+
+    public 
+}
