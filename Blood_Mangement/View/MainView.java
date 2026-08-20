@@ -1,5 +1,5 @@
 package Blood_Mangement.View;
 
-public m {
+public class MainView {
     
 }
