@@ -1,5 +1,6 @@
 package Blood_Mangement.Model.DAO;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -15,8 +16,12 @@ public class BloodPackDao extends BaseDao{
     // [1] 혈액팩 등록
     public boolean bloodCreate(BloodPackDto BloodPackDto){
         try{
-
-        }catch(SQLException e){System.out.println(e);}
+            String sql = "insert into blood_pack(blood_type, received_date, expiration_date)values(?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 36 DAY))";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, BloodPackDto.getBlood_type());
+            int result = ps.executeUpdate();
+            if(result==1) return true;
+        }catch(SQLException e){System.out.println("혈액팩 입고 실패"+e);}
         return false;
     }
 
@@ -35,7 +40,7 @@ public class BloodPackDao extends BaseDao{
     }
     // [4] 유통기한 임박 혈액팩 조회(기준 7일 이내)
     public BloodPackDto ebloodPrint(){
-        
+
     }
     // [5] 유통기한에 따른 상태 변경(유통기한이 넘을 경우 폐기)
     public int bloodUpdate(){
