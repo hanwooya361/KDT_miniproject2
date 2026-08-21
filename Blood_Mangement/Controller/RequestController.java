@@ -1,5 +1,5 @@
 package Blood_Mangement.Controller;
 
-public class CommunityController {
+public class RequestController {
     
 }
