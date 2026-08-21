@@ -28,7 +28,7 @@ public class MemberDao extends BaseDao {
         } return false;
     }
     // 전체조회함수
-    
+
 
     // 개인조회함수
 
