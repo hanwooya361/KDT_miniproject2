@@ -1,5 +1,5 @@
 package Blood_Mangement.Model.DTO;
 
-public class BloodPack {
+public class BloodPackDto {
     
 }

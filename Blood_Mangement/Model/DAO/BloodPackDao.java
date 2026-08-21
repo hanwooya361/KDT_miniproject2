@@ -1,5 +1,5 @@
 package Blood_Mangement.Model.DAO;
 
-public class BloodPack {
+public class BloodPackDao {
     
 }
