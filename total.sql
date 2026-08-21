@@ -19,12 +19,12 @@ CREATE TABLE donation_history (
     CONSTRAINT fk_donation_member
         FOREIGN KEY (member_id)
         REFERENCES member(member_id)
-);
+) AUTO_INCREMENT = 10000;
 
 CREATE TABLE blood_pack (
     blood_pack_id INT AUTO_INCREMENT PRIMARY KEY,
     blood_type VARCHAR(3),
-    donation_id INT NOT NULL,
+    donation_id INT,
     received_date DATE,
     expiration_date DATE,
     shipment_date DATE DEFAULT NULL,
@@ -32,11 +32,11 @@ CREATE TABLE blood_pack (
     CONSTRAINT fk_blood_pack_donation
         FOREIGN KEY (donation_id)
         REFERENCES donation_history(donation_id)
-);
+) AUTO_INCREMENT = 20000;
 
 
 CREATE TABLE transfusion_request (
-    request_id INT PRIMARY KEY,
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
     requester_id INT NOT NULL,
     request_type VARCHAR(20),
     patient_name VARCHAR(30),
@@ -49,10 +49,10 @@ CREATE TABLE transfusion_request (
     CONSTRAINT fk_request_member
         FOREIGN KEY (requester_id)
         REFERENCES member(member_id)
-);
+) AUTO_INCREMENT = 30000;
 
 CREATE TABLE matching (
-    matching_detail_id INT PRIMARY KEY,
+    matching_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
     blood_pack_id INT NOT NULL,
 
@@ -63,7 +63,7 @@ CREATE TABLE matching (
     CONSTRAINT fk_matching_blood_pack
         FOREIGN KEY (blood_pack_id)
         REFERENCES blood_pack(blood_pack_id)
-);
+) AUTO_INCREMENT = 40000;
 
 
 INSERT INTO member
