@@ -55,7 +55,7 @@ CREATE TABLE matching (
     matching_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
     blood_pack_id INT NOT NULL,
-
+    
     CONSTRAINT fk_matching_shipment
         FOREIGN KEY (member_id)
         REFERENCES member(member_id),
