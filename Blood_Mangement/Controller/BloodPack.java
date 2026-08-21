@@ -1,5 +1,5 @@
 package Blood_Mangement.Controller;
 
-public class BlogController {
+public class BloodPack {
     
 }

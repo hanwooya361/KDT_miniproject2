@@ -1,5 +1,8 @@
 package Blood_Mangement.Model.DAO;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+
 public class BaseDao {
     // 여러개 DAO 클래스들에게 JDBC연동 인스턴스 상속
     // 1. 연동 정보

@@ -1,4 +1,4 @@
-CREATE TABLE blood_pack (
+CREATE TABLE bloodpack (
     blood_pack_id INT AUTO_INCREMENT PRIMARY KEY,
     blood_type VARCHAR(3),
     donation_id INT NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE blood_pack (
         REFERENCES donation_history(donation_id)
 );
 
-INSERT INTO blood_pack
+INSERT INTO bloodpack
 (blood_pack_id, blood_type, donation_id, expiration_date,
  received_date, shipment_date, status)
 VALUES
