@@ -27,8 +27,8 @@ CREATE TABLE blood_pack (
     donation_id INT NOT NULL,
     received_date DATE,
     expiration_date DATE,
-    shipment_date DATE DEFAULT 'NULL',
-    status DEFAULT '보관중',
+    shipment_date DATE DEFAULT NULL,
+    status VARCHAR(10) DEFAULT '보관중',
     CONSTRAINT fk_blood_pack_donation
         FOREIGN KEY (donation_id)
         REFERENCES donation_history(donation_id)
@@ -44,7 +44,7 @@ CREATE TABLE transfusion_request (
     blood_type VARCHAR(3),
     requested_quantity INT,
     deadline DATE,
-    status DEFAULT '대기중',
+    status VARCHAR(10) DEFAULT '대기중',
     created_at DATE,
     CONSTRAINT fk_request_member
         FOREIGN KEY (requester_id)
@@ -58,7 +58,7 @@ CREATE TABLE matching (
 
     CONSTRAINT fk_matching_shipment
         FOREIGN KEY (member_id)
-        REFERENCES shipment(member_id),
+        REFERENCES member(member_id),
 
     CONSTRAINT fk_matching_blood_pack
         FOREIGN KEY (blood_pack_id)

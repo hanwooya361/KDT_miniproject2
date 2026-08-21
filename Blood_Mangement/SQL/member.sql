@@ -7,6 +7,7 @@ CREATE TABLE member (
     mcreated_at DATE
 );
 
+
 INSERT INTO member
 (member_id, login_id, name, phone, member_type, mcreated_at)
 VALUES
