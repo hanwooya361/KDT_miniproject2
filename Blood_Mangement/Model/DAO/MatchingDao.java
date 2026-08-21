@@ -93,7 +93,10 @@ public class MatchingDao extends BaseDao {
                                 + "join transfusion_request tr on m.member_id = tr.requester_id "
                                 + "where bp.shipment_date like concat(?, '%') and bp.status = '출고완료'";
 
-                                
+                PreparedStatement ps1 = conn.prepareStatement(sql1);   
+                ps.set
+
+
                     
 
 
