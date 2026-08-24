@@ -1,7 +1,7 @@
 package Blood_Mangement.Model.DAO;
 
 import java.util.ArrayList;
-import Blood_Mangement.DTO.RequestDto;
+import Blood_Mangement.Model.DTO.RequestDto;
 
 public class RequestDao {
     private RequestDao() {}
