@@ -33,17 +33,17 @@ public class MemberDao extends BaseDao {
     public ArrayList<MemberDto> mView(){
         ArrayList<MemberDto> mlist = new ArrayList<>();
         try {
-            String sql = "select * from board"; // 2.1 SQL 작성한다.
+            String sql = "select * from Member inner join"; // 2.1 SQL 작성한다.
             PreparedStatement ps = conn.prepareStatement( sql );
             ResultSet rs =  ps.executeQuery();
             
             while (rs.next() ) {
                 MemberDto memberDto = new MemberDto();
-                memberDto.setLogin_id(rs.getString("login_id"));
+                memberDto.setLogin_id(rs.getString("login_id"));    //삭제
                 memberDto.setName(rs.getString("name"));
-                memberDto.setPhone(rs.getString("Phone"));
-                memberDto.setMember_type(rs.getString("Member_type"));
-                memberDto.setDonation_date(rs.getString("Donation_date"));
+                memberDto.setPhone(rs.getString("phone"));
+                memberDto.setMember_type(rs.getString("member_type"));
+                memberDto.setDonation_date(rs.getString("donation_date"));
                 mlist.add(memberDto);
             }
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class MemberDao extends BaseDao {
 
     // 헌혈이력정보삭제
     public boolean ddelete( int donation_id ){
-        try{ String sql = "delete from board where member_id = ?";
+        try{ String sql = "delete from board where donation_id = ?";
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setInt( 1 , donation_id ); // SQL 문법내 첫번째 ? 에 매개변수 값 대입 
             int result = ps.executeUpdate();
