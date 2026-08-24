@@ -20,7 +20,7 @@ public class BloodPackController {
 
     // [2] 전체조회 컨트롤러
     public ArrayList<BloodPackDto> bloodAllPirnt(){
-        ArrayList<BloodPackDto> result = bpd.bloodAllPirnt();
+        ArrayList<BloodPackDto> result = bpd.bloodAllPrint();
         return result;
     }
 

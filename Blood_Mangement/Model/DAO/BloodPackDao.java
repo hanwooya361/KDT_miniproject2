@@ -1,6 +1,7 @@
 package Blood_Mangement.Model.DAO;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -26,11 +27,22 @@ public class BloodPackDao extends BaseDao{
     }
 
     // [2] 전체 혈액팩 조회
-    public ArrayList<BloodPackDto> bloodAllPirnt(){
+    public ArrayList<BloodPackDto> bloodAllPrint(){
         ArrayList<BloodPackDto> bloodlist = new ArrayList<>();
+        String sql = "select * from blood_pack order by blood_pack_id";
         try{
-
-        }catch(SQLException e){System.out.println(e);}
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BloodPackDto bloodpackdto = new BloodPackDto();
+                bloodpackdto.setBlood_type(rs.getString("blood_type"));
+                bloodpackdto.setExpiration_date(rs.getString("expiration_date"));
+                bloodpackdto.setReceived_date(rs.getString("received_date"));
+                bloodpackdto.setShipment_date(rs.getString("shipment_date"));
+                bloodpackdto.setStatus(rs.getString("status"));
+                bloodlist.add(bloodpackdto);
+            }
+        }catch(SQLException e){System.out.println("혈액팩 조회 실패:"+e);}
         return bloodlist;
     }
 

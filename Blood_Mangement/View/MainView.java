@@ -17,7 +17,7 @@ public class MainView {
     public void run(){
         while(true){
             System.out.println("\n==================================================");
-            System.out.println("               혈액 관리 시스템");
+            System.out.println("               🩸혈액 관리 시스템🩸");
             System.out.println("==================================================");
             System.out.println("  [1] 혈액팩 재고 관리");
             System.out.println("  [2] 헌혈자 / 헌혈 이력 관리");
@@ -38,7 +38,7 @@ public class MainView {
     public void bloodPackMenu(){
         while (true){
             System.out.println("==========================");
-            System.out.println("[혈액팩 재고 관리]");
+            System.out.println("[🩸혈액팩 재고 관리🩸]");
             System.out.println("==========================");
             System.out.println("[1] 혈액팩 입고 ");
             System.out.println("[2] 전체 혈액팩 조회");
@@ -62,9 +62,9 @@ public class MainView {
     // 혈액팩 등록
     public void bloodCreate(){
         System.out.println("==========================");
-        System.out.println("혈액팩 입고");
+        System.out.println("🩸혈액팩 입고🩸");
         System.out.println("==========================");
-        System.out.print("혈액팩 입력 >");
+        System.out.print("🩸혈액팩 입력 >");
         String bloodtype = scan.next();
         BloodPackDto dto = new BloodPackDto();
         dto.setBlood_type(bloodtype);
@@ -78,8 +78,8 @@ public class MainView {
     // 혈액팩 전체 조회
     public void bloodAllPirnt(){
         ArrayList<BloodPackDto> result = bpc.bloodAllPirnt();
-        for(BloodPackDto dto : result){
-            System.out.println(dto.getBlood_pack_id() + "/" + dto.getBlood_type() + "/" + dto.getDonation_id() + "/" + dto.getExpiration_date() + "/" + dto.getReceived_date() + "/" + dto.getShipment_date() + "/" + dto.getStatus());
+        for(BloodPackDto bloodpackdto : result){
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + dto.getDonation_id() + "/" + dto.getExpiration_date() + "/" + dto.getReceived_date() + "/" + dto.getShipment_date() + "/" + dto.getStatus());
         }
     }
 
