@@ -10,5 +10,8 @@ public class RequestDao {
 
     private ArrayList <RequestDto> rlist = new ArrayList<>();
 
-    public 
+    public boolean rListAdd(RequestDto requestDto){
+        rlist.add(requestDto);
+        return true;
+    }
 }
