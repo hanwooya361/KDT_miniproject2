@@ -32,7 +32,7 @@ public class MainView {
             int mmenu = scan.nextInt();
             if(mmenu==1){bloodPackMenu();}
             else if(mmenu==2){}
-            else if(mmenu==3){}
+            else if(mmenu==3){requestMenu();}
             else if(mmenu==4){}
             else if(mmenu==5){}
             else{System.out.println("없는 메뉴입니다.");}
