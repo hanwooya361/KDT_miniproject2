@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import Blood_Mangement.Controller.BloodPackController;
 import Blood_Mangement.Controller.MatchingController;
 import Blood_Mangement.Controller.RequestController;
+import Blood_Mangement.Model.DAO.RequestDao;
 import Blood_Mangement.Model.DTO.BloodPackDto;
 import Blood_Mangement.Model.DTO.MatchingDto;
 import Blood_Mangement.Model.DTO.RequestDto;
@@ -37,22 +38,23 @@ public class MainView {
             else if(mmenu==2){}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){matchingMenu();}
-            else if(mmenu==5){}
+            else if(mmenu==5){break;}
             else{System.out.println("없는 메뉴입니다.");}
         }
     }
 
     public void bloodPackMenu(){
+        bpc.bloodUpdate();
         while (true){
-            System.out.println("==========================");
-            System.out.println("[🩸혈액팩 재고 관리🩸]");
-            System.out.println("==========================");
-            System.out.println("[1] 혈액팩 입고 ");
-            System.out.println("[2] 전체 혈액팩 조회");
-            System.out.println("[3] 혈액형별 혈액팩 조회");
-            System.out.println("[4] 유통기한 임박 혈액팩 조회");
-            System.out.println("[5] 혈액팩 정보 삭제");
-            System.out.println("[6] 이전 메뉴");
+            System.out.println("\n==================================================");
+            System.out.println("               🩸혈액 재고 관리");
+            System.out.println("==================================================");
+            System.out.println(" [1] 혈액팩 입고 ");
+            System.out.println(" [2] 전체 혈액팩 조회");
+            System.out.println(" [3] 혈액형별 혈액팩 조회");
+            System.out.println(" [4] 유통기한 임박 혈액팩 조회");
+            System.out.println(" [5] 혈액팩 정보 삭제");
+            System.out.println(" [6] 이전 메뉴");
             System.out.print("메뉴 선택 >");
             int bmenu = scan.nextInt();
             if(bmenu == 1){bloodCreate();}
@@ -85,21 +87,39 @@ public class MainView {
     // 혈액팩 전체 조회
     public void bloodAllPirnt(){
         ArrayList<BloodPackDto> result = bpc.bloodAllPirnt();
+        if(result.isEmpty()){
+            System.out.println("조회된 혈액팩이 없습니다.");
+            return;
+        }
         for(BloodPackDto bloodpackdto : result){
-            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + dto.getDonation_id() + "/" + dto.getExpiration_date() + "/" + dto.getReceived_date() + "/" + dto.getShipment_date() + "/" + dto.getStatus());
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
         }
     }
 
     // 혈액형별 잔여 혈액팩 조회
     public void bloodPrint(){
-        System.out.println("혈액형을 입력해주세요: ");
+        System.out.print("혈액형을 입력해주세요 > ");
         String blood_type = scan.next();
-
+        ArrayList<BloodPackDto> result = bpc.bloodPrint(blood_type);
+        if(result.isEmpty()){
+            System.out.println(blood_type + "혈액팩이 없습니다.");
+            return;
+        }
+        for(BloodPackDto bloodpackdto : result){
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
     }
+}
     
     // 유통기한 임박 혈액팩 조회
     public void ebloodPrint(){
-
+         ArrayList<BloodPackDto> result = bpc.ebloodPrint();
+         if(result.isEmpty()){
+            System.out.println("혈액팩이 없습니다.");
+            return;
+         }
+         for(BloodPackDto bloodpackdto : result){
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
+        }
     }
     
     // 혈액팩 유통기한에 따른 상태 변경
@@ -109,8 +129,20 @@ public class MainView {
 
     // 혈액팩 정보 삭제
     public void bloodDelete(){
-        System.out.println();
+        ArrayList<BloodPackDto> result = bpc.bloodAllPirnt(); 
+        if(result.isEmpty()){
+            System.out.println("삭제할혈액팩이 없습니다.");
+            return;
+         }
+        for(BloodPackDto bloodpackdto : result){
+            System.out.println("번호:" + bloodpackdto.getBlood_pack_id() + "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
     }
+        System.out.print("삭제할 혈액팩 번호를 입력해주세요 >");
+        int blood_pack_id = scan.nextInt();
+        boolean result1 = bpc.bloodDelete(blood_pack_id);
+        if(result1)System.out.println("삭제 성공");
+        else{System.out.println("삭제 실패");}
+}
 
     // ============= 수혈 요청 관리 ==============
     public void requestMenu(){
@@ -146,6 +178,9 @@ public class MainView {
         System.out.print("요청 타입(지정헌혈/혈액요청) > "); 
         String request_type = scan.next();
 
+        System.out.print("회원 이름 >");
+        String member_name = scan.next();
+
         System.out.print("환자 이름 >");
         String patient_name = scan.next();
 
@@ -163,7 +198,7 @@ public class MainView {
         LocalDate deadline = LocalDate.parse(deadline1);
         LocalDate created_at = LocalDate.now();
         
-        RequestDto requestDto = new RequestDto(request_type, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
+        RequestDto requestDto = new RequestDto(request_type, member_name, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
         if (rc.rListAdd(requestDto)) {
             System.out.println("[안내] 요청글 등록 성공");
         } 
@@ -174,23 +209,44 @@ public class MainView {
 
     // 요청 전체 목록 조회
     public void rListCheck() {
+        ArrayList<RequestDto> rlist = rc.rListCheck();
+        System.out.println("========== 요청 목록 ===========");
+        if(rlist.isEmpty()) {
+            System.out.println("요청 목록이 없습니다.");
+            return;
+        }
+        for (RequestDto list: rlist ) { System.out.println(list);}
 
     }
 
     // 요청 대기 목록 조회
     public void rWaitListCheck() {
-
+        ArrayList<RequestDto> rlist = rc.rWaitListCheck();
+        System.out.println("========== 요청 목록 ===========");
+        if(rlist.isEmpty()) {
+            System.out.println("요청 목록이 없습니다.");
+            return;
+        }
+        for (RequestDto list: rlist ) { System.out.println(list);}
     }
 
     // 요청 상태 변경
     public void rListUpdate() {
+        System.out.print("변경하고 싶은 요청 목록의 ID를 입력해주세요.");
+        int request_id = scan.nextInt();
 
+        if(rc.rListUpdate(request_id)) { 
+            System.out.print("변경하고 싶은 정보를 입력하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 >");
+            int ch = scan.nextInt();
+            
+            
+        }
+        else { System.out.println("수정 실패");}
     }
 
-    // 요청 취소
-    public void rListDelete() {
 
-    }
+
+    
 
     // ==================== 혈액 출고 및 매칭 관리 ====================
     public void matchingMenu( ){
