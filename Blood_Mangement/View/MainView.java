@@ -82,8 +82,12 @@ public class MainView {
     // 혈액팩 전체 조회
     public void bloodAllPirnt(){
         ArrayList<BloodPackDto> result = bpc.bloodAllPirnt();
+        if(result.isEmpty()){
+            System.out.println("조회된 혈액팩이 없습니다.");
+            return;
+        }
         for(BloodPackDto bloodpackdto : result){
-            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + dto.getDonation_id() + "/" + dto.getExpiration_date() + "/" + dto.getReceived_date() + "/" + dto.getShipment_date() + "/" + dto.getStatus());
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + bloodpackdto.getExpiration_date() + "/ 유통기한:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
         }
     }
 

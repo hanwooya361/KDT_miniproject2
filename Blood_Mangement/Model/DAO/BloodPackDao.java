@@ -46,6 +46,7 @@ public class BloodPackDao extends BaseDao{
         return bloodlist;
     }
 
+
     // [3] 잔여 혈액팩 조회
     public BloodPackDto bloodPrint(String blood_type){
 
