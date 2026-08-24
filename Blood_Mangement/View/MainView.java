@@ -3,9 +3,12 @@ package Blood_Mangement.View;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 import Blood_Mangement.Controller.BloodPackController;
+import Blood_Mangement.Controller.RequestController;
 import Blood_Mangement.Model.DTO.BloodPackDto;
+import Blood_Mangement.Model.DTO.RequestDto;
 
 public class MainView {
     private MainView(){} // 1.
@@ -13,7 +16,8 @@ public class MainView {
     public static MainView getInstance( ){ return instance; } // 3. 
     private Scanner scan = new Scanner(System.in);
     private BloodPackController bpc = BloodPackController.getInstance();
-    
+    private RequestController rc = RequestController.getInstance();
+
     public void run(){
         while(true){
             System.out.println("\n==================================================");
@@ -104,4 +108,85 @@ public class MainView {
     public void bloodDelete(){
         System.out.println();
     }
-}
+
+    // ============= 수혈 요청 관리 ==============
+    public void requestMenu(){
+        while (true){
+            System.out.println("==========================");
+            System.out.println("[수혈 요청 관리]");
+            System.out.println("==========================");
+            System.out.println("[1] 헌혈 요청글 작성");
+            System.out.println("[2] 요청 전체 목록 조회");
+            System.out.println("[3] 요청 대기 목록 조회");
+            System.out.println("[4] 요청 상태 변경");
+            System.out.println("[5] 요청 취소");
+            System.out.println("[6] 이전 메뉴");
+            System.out.print("메뉴 선택 >");
+            int rmenu = scan.nextInt();
+            if(rmenu == 1){rListAdd();}
+            else if(rmenu == 2){rListCheck();}
+            else if(rmenu == 3){rWaitListCheck();}
+            else if(rmenu == 4){rListUpdate();}
+            else if(rmenu == 5){rListDelete();}
+            else if(rmenu == 6){break;}
+            else{System.out.println("잘못된 번호입니다.");}
+        }
+    }
+
+    // 헌혈 요청글 작성
+    public void rListAdd(){
+        System.out.println("=============================");
+        System.out.println("[헌혈 요청글 작성]");
+        System.out.println("=============================");
+        System.out.println("양식에 맞는 정보를 입력해주세요.");
+        // 정보 입력 받기
+        System.out.print("요청 타입(지정헌혈/혈액요청) > "); 
+        String request_type = scan.next();
+
+        System.out.print("환자 이름 >");
+        String patient_name = scan.next();
+
+        System.out.print("병원 이름 >");
+        String hospital_name = scan.next();
+
+        System.out.print("혈액형 >");
+        String blood_type = scan.next();
+
+        System.out.print("요청 수량 >");
+        int requested_quantity = scan.nextInt();
+
+        System.out.println("기한 >");
+        String deadline1 = scan.next();
+        LocalDate deadline = LocalDate.parse(deadline1);
+        LocalDate created_at = LocalDate.now();
+        
+        RequestDto requestDto = new RequestDto(request_type, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
+        if (rc.rListAdd(requestDto)) {
+            System.out.println("[안내] 요청글 등록 성공");
+        } 
+        else {
+            System.out.println("[오류] 요청글 등록 실패");
+        }
+    }
+
+    // 요청 전체 목록 조회
+    public void rListCheck() {
+
+    }
+
+    // 요청 대기 목록 조회
+    public void rWaitListCheck() {
+
+    }
+
+    // 요청 상태 변경
+    public void rListUpdate() {
+
+    }
+
+    // 요청 취소
+    public void rListDelete() {
+
+    }
+
+} // MainView end
