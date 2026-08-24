@@ -73,4 +73,18 @@ public class RequestDto {
         this.created_at = created_at;
     }
     
+
+    @Override
+    public String toString() {
+        return 
+                "요청 타입 : '" + request_type + '\'' +
+                ", 회원 이름 : '" + member_name + '\'' +
+                ", 환자 이름 : '" + patient_name + '\'' +
+                ", 병원 이름 : '" + hospital_name + '\'' +
+                ", 혈액형 : '" + blood_type + '\'' +
+                ", 요청 수량 : " + requested_quantity +
+                ", 기한 : " + deadline +
+                ", 작성 날짜 : " + created_at +
+                '}';
+    }
 }
