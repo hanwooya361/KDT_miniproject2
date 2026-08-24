@@ -30,9 +30,8 @@ public class BloodPackController {
     }
 
     // [4] 유통기한 임박 혈액팩 조회 컨트롤러
-    public BloodPackDto ebloodPrint(){
-        BloodPackDto result = bpd.ebloodPrint();
-        return result;
+    public ArrayList<BloodPackDto> ebloodPrint(){
+        return bpd.ebloodPrint();
     }
 
     // [5] 혈액팩 상태 변경 컨트롤러
