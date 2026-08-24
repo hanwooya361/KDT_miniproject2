@@ -2,6 +2,7 @@ package Blood_Mangement.Model.DTO;
 import java.time.LocalDate;
 public class RequestDto {
     
+    private int request_id;
     private String request_type;
     private String member_name;
     private String patient_name;
@@ -11,8 +12,23 @@ public class RequestDto {
     private LocalDate deadline;
     private LocalDate created_at;
 
+
     public RequestDto() {}
+    // 추가용 생성자
     public RequestDto( String request_type, String member_name, String patient_name, String hospital_name, String blood_type, int requested_quantity, LocalDate deadline, LocalDate created_at){
+        this.request_type = request_type;
+        this.member_name = member_name;
+        this.patient_name = patient_name;
+        this.hospital_name = hospital_name;
+        this.blood_type = blood_type;
+        this.requested_quantity = requested_quantity;
+        this.deadline = deadline;
+        this.created_at = created_at;
+    }
+
+    // 읽기용 생성자
+    public RequestDto( int request_id, String request_type, String member_name, String patient_name, String hospital_name, String blood_type, int requested_quantity, LocalDate deadline, LocalDate created_at){
+        this.request_id = request_id;
         this.request_type = request_type;
         this.member_name = member_name;
         this.patient_name = patient_name;
@@ -77,6 +93,7 @@ public class RequestDto {
     @Override
     public String toString() {
         return 
+                "요청 번호 : '" + request_id + '\'' +
                 "요청 타입 : '" + request_type + '\'' +
                 ", 회원 이름 : '" + member_name + '\'' +
                 ", 환자 이름 : '" + patient_name + '\'' +

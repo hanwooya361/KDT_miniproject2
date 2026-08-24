@@ -63,7 +63,8 @@ public class RequestDao extends BaseDao {
         try {
             // DB에서 가져오기
             String sql =
-            "SELECT r.request_type, " +
+            "SELECT r.request_id, " +
+            "r.request_type, " +
             "m.name AS member_name, " +
             "r.patient_name, " +
             "r.hospital_name, " +
@@ -81,6 +82,7 @@ public class RequestDao extends BaseDao {
             // 가져온거 list에 넣기
             while(rs.next()){
                 rList.add(new RequestDto(
+                rs.getInt("request_id"),
                 rs.getString("request_type"),
                 rs.getString("member_name"),
                 rs.getString("patient_name"),
@@ -104,7 +106,8 @@ public class RequestDao extends BaseDao {
         try {
             // DB에서 가져오기
             String sql =
-            "SELECT r.request_type, " +
+            "SELECT r.request_id, " +
+            "r.request_type, " +
             "m.name AS member_name, " +
             "r.patient_name, " +
             "r.hospital_name, " +
@@ -123,6 +126,7 @@ public class RequestDao extends BaseDao {
             // 가져온거 list에 넣기
             while(rs.next()){
                 rList.add(new RequestDto(
+                rs.getInt("request_id"),
                 rs.getString("request_type"),
                 rs.getString("member_name"),
                 rs.getString("patient_name"),
@@ -139,4 +143,7 @@ public class RequestDao extends BaseDao {
 
         return rList;
     }
+
+    // 요청 상태 변경
+
 } // dao end

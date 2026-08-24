@@ -198,7 +198,7 @@ public class MainView {
 
     // 요청 상태 변경
     public void rListUpdate() {
-
+        
     }
 
     // 요청 취소
