@@ -29,12 +29,13 @@ public class BloodPackDao extends BaseDao{
     // [2] 전체 혈액팩 조회
     public ArrayList<BloodPackDto> bloodAllPrint(){
         ArrayList<BloodPackDto> bloodlist = new ArrayList<>();
-        String sql = "select * from blood_pack order by blood_pack_id";
         try{
+            String sql = "select * from blood_pack order by blood_pack_id";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 BloodPackDto bloodpackdto = new BloodPackDto();
+                bloodpackdto.setBlood_pack_id(rs.getInt("blood_pack_id"));
                 bloodpackdto.setBlood_type(rs.getString("blood_type"));
                 bloodpackdto.setExpiration_date(rs.getString("expiration_date"));
                 bloodpackdto.setReceived_date(rs.getString("received_date"));
@@ -46,20 +47,65 @@ public class BloodPackDao extends BaseDao{
         return bloodlist;
     }
 
+
     // [3] 잔여 혈액팩 조회
-    public BloodPackDto bloodPrint(String blood_type){
-
+    public ArrayList<BloodPackDto> bloodPrint(String blood_type){
+        ArrayList<BloodPackDto> bloodlist = new ArrayList<>();
+        try{
+            String sql = "select * from blood_pack where blood_type = ? and status = '보관중' order by expiration_date";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, blood_type);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BloodPackDto bloodpackdto = new BloodPackDto();
+                bloodpackdto.setBlood_type(rs.getString("blood_type"));
+                bloodpackdto.setExpiration_date(rs.getString("expiration_date"));
+                bloodpackdto.setReceived_date(rs.getString("received_date"));
+                bloodpackdto.setShipment_date(rs.getString("shipment_date"));
+                bloodpackdto.setStatus(rs.getString("status"));
+                bloodlist.add(bloodpackdto);
+            }
+        }catch(SQLException e){System.out.println("잔여 혈액팩 조회 실패:"+e);}
+        return bloodlist;
     }
-    // [4] 유통기한 임박 혈액팩 조회(기준 7일 이내)
-    public BloodPackDto ebloodPrint(){
-
+    // [4] 유통기한 임박 혈액팩 조회(기준 3일 이내)
+    public ArrayList<BloodPackDto> ebloodPrint(){
+        ArrayList<BloodPackDto> bloodlist = new ArrayList<>();
+        try{
+            String sql = "select * from blood_pack where datediff(expiration_date, curdate()) between 0 and 3 and status = '보관중' order by expiration_date";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BloodPackDto bloodpackdto = new BloodPackDto();
+                bloodpackdto.setBlood_type(rs.getString("blood_type"));
+                bloodpackdto.setExpiration_date(rs.getString("expiration_date"));
+                bloodpackdto.setReceived_date(rs.getString("received_date"));
+                bloodpackdto.setShipment_date(rs.getString("shipment_date"));
+                bloodpackdto.setStatus(rs.getString("status"));
+                bloodlist.add(bloodpackdto);
+            }
+        }catch(SQLException e){System.out.println("잔여 혈액팩 조회 실패:"+e);}
+        return bloodlist;
     }
     // [5] 유통기한에 따른 상태 변경(유통기한이 넘을 경우 폐기)
     public int bloodUpdate(){
-
+        try{
+            String sql = "update blood_pack set status='폐기' where expiration_date < curdate() and status = '보관중'";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            int result  = ps.executeUpdate();
+            return result;
+        }catch(SQLException e){System.out.println("혈액팩 상태 변경 실패"+e);}
+        return 0;
     }
     // [6] 혈액팩 정보 삭제
     public boolean bloodDelete(int blood_pack_id){
-
+        try{
+            String sql = "delete from blood_pack where blood_pack_id = ? and status = '보관중'";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, blood_pack_id);
+            int result = ps.executeUpdate();
+            return result > 0;
+        }catch(SQLException e){System.out.println("혈액팩 삭제 실패"+e);}
+        return false;
     }
 }
