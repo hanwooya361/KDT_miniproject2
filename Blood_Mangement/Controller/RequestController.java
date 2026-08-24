@@ -29,4 +29,10 @@ public class RequestController {
         ArrayList<RequestDto> rList = rd.rWaitListcheck();
         return rList;
     }
+
+    // [4] 헌혈 요청 목록 수정
+    public boolean rListUpdate(int request_id){
+        return rd.rListUpdate(request_id);
+    }
+
 }

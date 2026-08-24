@@ -198,12 +198,20 @@ public class MainView {
 
     // 요청 상태 변경
     public void rListUpdate() {
-        
+        System.out.print("변경하고 싶은 요청 목록의 ID를 입력해주세요.");
+        int request_id = scan.nextInt();
+
+        if(rc.rListUpdate(request_id)) { 
+            System.out.print("변경하고 싶은 정보를 입력하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 >");
+            int ch = scan.nextInt();
+            
+            
+        }
+        else { System.out.println("수정 실패");}
     }
 
-    // 요청 취소
-    public void rListDelete() {
 
-    }
+
+    
 
 } // MainView end

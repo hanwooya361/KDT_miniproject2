@@ -145,5 +145,28 @@ public class RequestDao extends BaseDao {
     }
 
     // 요청 상태 변경
+    public boolean rListUpdate(int request_id) {
+        try{
+            String sql = "update transfusion_request set( ";
+            PreparedStatement ps = conn.prepareStatement( sql );
+            ps.setString(1, requestDto.getRequest_type());
+            int memberId = findMemberId(requestDto.getMember_name());
+            ps.setInt(2, memberId);
+            ps.setString(3, requestDto.getPatient_name());
+            ps.setString(4, requestDto.getHospital_name());
+            ps.setString(5, requestDto.getBlood_type());
+            ps.setInt(6, requestDto.getRequested_quantity());
+            ps.setDate(7, java.sql.Date.valueOf(requestDto.getDeadline()));
+            ps.setDate(8, java.sql.Date.valueOf(requestDto.getCreated_at()));
+
+            int result = ps.executeUpdate();
+            if(result==1) return true;
+        }
+        catch(SQLException e){
+            System.out.println("실패"+e);
+        }
+        return false;
+    }
+
 
 } // dao end
