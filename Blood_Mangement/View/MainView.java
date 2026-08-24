@@ -87,15 +87,22 @@ public class MainView {
             return;
         }
         for(BloodPackDto bloodpackdto : result){
-            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + bloodpackdto.getExpiration_date() + "/ 유통기한:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + bloodpackdto.getExpiration_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 유통기한:" + bloodpackdto.getReceived_date() + "/ 상태:" + bloodpackdto.getStatus());
         }
     }
 
     // 혈액형별 잔여 혈액팩 조회
     public void bloodPrint(){
-        System.out.println("혈액형을 입력해주세요: ");
+        System.out.println("혈액형을 입력해주세요> ");
         String blood_type = scan.next();
-
+        ArrayList<BloodPackDto> result = bpc.bloodPrint(blood_type);
+        if(result.isEmpty()){
+            System.out.println(blood_type + "혈액팩이 없습니다.");
+            return;
+        }
+        for(BloodPackDto bloodpackdto : result){
+            System.out.println( "혈액형:" + bloodpackdto.getBlood_type() + "/ 입고일:" + bloodpackdto.getExpiration_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 유통기한:" + bloodpackdto.getReceived_date() + "/ 상태:" + bloodpackdto.getStatus());
+        }
     }
     
     // 유통기한 임박 혈액팩 조회
