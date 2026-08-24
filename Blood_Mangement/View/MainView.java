@@ -34,7 +34,7 @@ public class MainView {
             else if(mmenu==2){}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){}
-            else if(mmenu==5){}
+            else if(mmenu==5){break;}
             else{System.out.println("없는 메뉴입니다.");}
         }
     }
