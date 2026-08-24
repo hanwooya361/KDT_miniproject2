@@ -200,16 +200,22 @@ public class MainView {
     public void rListUpdate() {
         System.out.print("변경하고 싶은 요청 목록의 ID를 입력해주세요.");
         int request_id = scan.nextInt();
-
-        if(rc.rListUpdate(request_id)) { 
-            System.out.print("변경하고 싶은 정보를 입력하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 >");
-            int ch = scan.nextInt();
+        System.out.print("변경할 카테고리를 선택하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 [5] 수량 >");
+        int ch = scan.nextInt();
+        System.out.print("변경할 정보를 입력하세요");
+        String value = scan.next();
+        if(rc.rListUpdate(request_id, ch, value)) { 
+            System.out.println("수정 성공");
             
             
         }
         else { System.out.println("수정 실패");}
     }
 
+    // 요청 목록 삭제
+    public void rListDelete(){
+        
+    }
 
 
     
