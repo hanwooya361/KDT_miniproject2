@@ -187,7 +187,13 @@ public class MainView {
 
     // 요청 대기 목록 조회
     public void rWaitListCheck() {
-
+        ArrayList<RequestDto> rlist = rc.rWaitListCheck();
+        System.out.println("========== 요청 목록 ===========");
+        if(rlist.isEmpty()) {
+            System.out.println("요청 목록이 없습니다.");
+            return;
+        }
+        for (RequestDto list: rlist ) { System.out.println(list);}
     }
 
     // 요청 상태 변경

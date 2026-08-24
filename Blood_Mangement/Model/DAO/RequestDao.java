@@ -97,4 +97,46 @@ public class RequestDao extends BaseDao {
 
         return rList;
     }
+
+    // 요청 대기 목록 조회
+    public ArrayList<RequestDto> rWaitListcheck() {
+        ArrayList<RequestDto> rList = new ArrayList<>();
+        try {
+            // DB에서 가져오기
+            String sql =
+            "SELECT r.request_type, " +
+            "m.name AS member_name, " +
+            "r.patient_name, " +
+            "r.hospital_name, " +
+            "r.blood_type, " +
+            "r.requested_quantity, " +
+            "r.deadline, " +
+            "r.created_at " +
+            "FROM transfusion_request r " +
+            "JOIN member m ON r.requester_id = m.member_id " + 
+            "WHERE r.status = '대기중' " ;
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            // 가져온거 list에 넣기
+            while(rs.next()){
+                rList.add(new RequestDto(
+                rs.getString("request_type"),
+                rs.getString("member_name"),
+                rs.getString("patient_name"),
+                rs.getString("hospital_name"),
+                rs.getString("blood_type"),
+                rs.getInt("requested_quantity"),
+                rs.getDate("deadline").toLocalDate(),
+                rs.getDate("created_at").toLocalDate()
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("회원 조회 실패 : " + e);
+        }
+
+        return rList;
+    }
 } // dao end

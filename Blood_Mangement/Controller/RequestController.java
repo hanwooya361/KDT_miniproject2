@@ -18,9 +18,15 @@ public class RequestController {
         return rd.rListAdd(requestDto);
     }
 
-    // [2] 헌혈 요청목록 전체 조회
+    // [2] 헌혈 요청 전체 목록 조회
     public ArrayList<RequestDto> rListCheck() {
         ArrayList<RequestDto> rList = rd.rListcheck();
+        return rList;
+    }
+
+    // [3] 헌혈 요청 대기 목록 조회
+    public ArrayList<RequestDto> rWaitListCheck() {
+        ArrayList<RequestDto> rList = rd.rWaitListcheck();
         return rList;
     }
 }
