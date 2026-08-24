@@ -30,12 +30,25 @@ public class MemberController {
     }
 
     // 회원정보수정
+    public boolean mUpdate(MemberDto memberDto){
+        boolean result = med.mUpdate(memberDto);
+        return result;
+    }
 
     // 헌혈이력정보수정
-
+    public boolean dUpdate(MemberDto memberDto){
+        boolean result = med.dUpdate(memberDto);
+        return result;
+    }
     // 회원정보삭제
+    public boolean mdelete(int member_id){
+        return med.mdelete(member_id);
+    }
 
     // 헌혈이력정보삭제
+    public boolean ddelete(int donation_id){
+        return med.ddelete(donation_id);
+    }
 
 
 
