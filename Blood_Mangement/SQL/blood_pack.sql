@@ -1,11 +1,11 @@
-CREATE TABLE bloodpack (
+CREATE TABLE blood_pack (
     blood_pack_id INT AUTO_INCREMENT PRIMARY KEY,
     blood_type VARCHAR(3),
     donation_id INT NOT NULL,
     received_date DATE,
     expiration_date DATE,
-    shipment_date DATE DEFAULT 'NULL',
-    status DEFAULT '보관중',
+    shipment_date DATE DEFAULT NULL,
+    status VARCHAR(10) DEFAULT '보관중',
     CONSTRAINT fk_blood_pack_donation
         FOREIGN KEY (donation_id)
         REFERENCES donation_history(donation_id)
