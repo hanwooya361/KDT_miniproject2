@@ -144,8 +144,21 @@ public class MatchingDao extends BaseDao {
                 return list; // 리스트 반환
             } // matchingView end
 
-            // [API22] 혈액팩 출고상태 수동 수정 구현 ShipmentUpdate();
-            String 
+            // [API22] 혈액팩 출고상태 수동 수정 구현 shipmentUpdate();
+            public boolean shipmentUpdate( MatchingDto matchingDto ){ 
+                try{ String sql = "update blood_pack set blood_pack_id = ? where matching_id = ? ";
+
+                PreparedStatement ps1 = conn.prepareStatement(sql);
+                ps1.setInt( 1, matchingDto.getBlood_pack_id( ) );
+                ps1.setInt( 2, matchingDto.getMatching_id( ) );
+                ps1.executeUpdate();
+            } catch( Exception e ){ System.out.println( e ); }
+            return false;
+
+            } // ShipmentUpdate end
+
+            // [API23] shipmentDelete();
+            
 
 
                 
@@ -160,6 +173,7 @@ public class MatchingDao extends BaseDao {
 
                     
     
+        
 
 } // class end
 
