@@ -30,8 +30,8 @@ public class MemberController {
     }
 
     // 회원정보수정
-    public boolean mUpdate(MemberDto memberDto){
-        boolean result = med.mUpdate(memberDto);
+    public boolean mUpdate(MemberDto memberDto, String oldLoginid){
+        boolean result = med.mUpdate(memberDto, oldLoginid);
         return result;
     }
 
@@ -41,13 +41,13 @@ public class MemberController {
         return result;
     }
     // 회원정보삭제
-    public boolean mdelete(int member_id){
-        return med.mdelete(member_id);
+    public boolean mdelete(String login_id){
+        return med.mdelete(login_id);
     }
 
     // 헌혈이력정보삭제
-    public boolean ddelete(int donation_id){
-        return med.ddelete(donation_id);
+    public boolean ddelete(String login_id){
+        return med.ddelete(login_id);
     }
 
 
