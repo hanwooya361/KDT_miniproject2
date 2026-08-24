@@ -155,10 +155,21 @@ public class MatchingDao extends BaseDao {
             } catch( Exception e ){ System.out.println( e ); }
             return false;
 
-            } // ShipmentUpdate end
+            } // shipmentUpdate end
 
-            // [API23] shipmentDelete();
-            
+            // [API23] 출고 기록 삭제 (보통 이력 관리를 위해 삭제보다는 취소 상태로 업데이트 처리) shipmentDelete(); 
+            public boolean shipmentDelete( MatchingDto matchingDto ){
+                try{ String sql = "update blood_pack set status = '보관중' , shipment_date = null where blood_pack_id = ?";
+                PreparedStatement ps1 = conn.prepareStatement(sql);
+                ps1.setInt(1, matchingDto.getBlood_pack_id( ) );
+                ps1.executeUpdate();
+
+                } catch( Exception e ){ System.out.println( e ); }
+                return false;
+
+            } // shipmentDelete end
+
+
 
 
                 

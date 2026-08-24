@@ -6,8 +6,10 @@ import java.util.Scanner;
 import java.time.LocalDate;
 
 import Blood_Mangement.Controller.BloodPackController;
+import Blood_Mangement.Controller.MatchingController;
 import Blood_Mangement.Controller.RequestController;
 import Blood_Mangement.Model.DTO.BloodPackDto;
+import Blood_Mangement.Model.DTO.MatchingDto;
 import Blood_Mangement.Model.DTO.RequestDto;
 
 public class MainView {
@@ -17,6 +19,7 @@ public class MainView {
     private Scanner scan = new Scanner(System.in);
     private BloodPackController bpc = BloodPackController.getInstance();
     private RequestController rc = RequestController.getInstance();
+    private MatchingController mc = MatchingController.getInstance();
 
     public void run(){
         while(true){
@@ -33,7 +36,7 @@ public class MainView {
             if(mmenu==1){bloodPackMenu();}
             else if(mmenu==2){}
             else if(mmenu==3){requestMenu();}
-            else if(mmenu==4){}
+            else if(mmenu==4){matchingMenu();}
             else if(mmenu==5){}
             else{System.out.println("없는 메뉴입니다.");}
         }
@@ -188,5 +191,121 @@ public class MainView {
     public void rListDelete() {
 
     }
+
+    // ==================== 혈액 출고 및 매칭 관리 ====================
+    public void matchingMenu( ){
+        while( true ){
+            System.out.println( "==========================" );
+            System.out.println( "💉 혈액 출고 및 매칭 관리 💉" );
+            System.out.println( "==========================" );
+            System.out.println( "[1] 수혈 매칭 및 출고 등록" );
+            System.out.println( "[2] 병원 출고 내역 조회" );
+            System.out.println( "[3] 매칭 성공 이력 전체 조회" );
+            System.out.println( "[4] 매칭 혈액팩 수정" );
+            System.out.println( "[5] 출고 취소" );
+            System.out.println( "[6] 이전 메뉴" );
+            System.out.print("메뉴 선택 > ");
+            int matchMenu = scan.nextInt( );
+            if ( matchMenu == 1 ) { shipmentCreate( ); }
+            else if ( matchMenu == 2 ){ shipmentView( ); }
+            else if ( matchMenu == 3 ){ matchingView( ); }
+            else if ( matchMenu == 4 ){ shipmentUpdate( ); }
+            else if ( matchMenu == 5 ){ shipmentDelete( ); }
+            else if ( matchMenu == 6 ){ break; }
+            else { System.out.println( "잘못된 번호입니다." ); }
+        } // while end
+    } // matchingMenu end
+
+        // [API18 , API19] 수혈 매칭 및 출고 등록
+        public void shipmentCreate( ){
+            System.out.println( "[수혈 매칭 및 출고 등록]" );
+            System.out.print( "수혈 요청 번호 > "); int request_id = scan.nextInt();
+            System.out.print( "혈액팩 번호 > " ); int blood_pack_id = scan.nextInt();
+            boolean result = mc.shipmentCreate( request_id , blood_pack_id );
+            if(result){ System.out.println( "[성공] 수혈 매칭 및 출고 처리가 완료되었습니다" );
+            }else{ System.out.println( "[실패] 출고 불가능 (상태 확인 필요)" ); }
+        
+        } // shipmentCreate end
+
+        // [API20] 병원 출고 내역 조회
+        public void shipmentView( ){
+            System.out.println("[병원 출고 내역 조회]");
+            System.out.print( "조회할 날짜 입력(예시: 2026-08-19) > " ); String shipment_date = scan.next();  
+            ArrayList< MatchingDto > list = mc.shipmentView( shipment_date );
+            System.out.println( "---------------------------------------" );
+            if( list == null ){ 
+                System.out.println( "해당 날짜의 출고 내역이 존재하지 않습니다." );
+            }else{
+                for( MatchingDto matchingDto : list ){
+                    System.out.println(
+                        "병원: " + matchingDto.getHospital_name( ) +
+                        " | 혈액팩번호: " + matchingDto.getBlood_pack_id( ) +
+                        " | 혈액형: " + matchingDto.getBlood_type( ) +
+                        " | 환자: " + matchingDto.getPatient_name( ) +
+                        " | 출고일: " + matchingDto.getShipment_date( ) );
+                } // for end
+            } // else end
+            System.out.println( "---------------------------------------" );
+        } // shipmentView end
+
+        // [API21] 매칭 성공이력 전체 조회 
+        public void matchingView( ){
+            System.out.println("[매칭 성공 이력 전체 조회]");
+            ArrayList< MatchingDto > list = mc.matchingView(); 
+            System.out.println( "---------------------------------------" );
+            if( list == null ){
+                System.out.println("매칭 이력이 존재하지 않습니다.");
+            }else{
+                for( MatchingDto matchingDto : list ){
+                    System.out.println(
+                        "매칭번호: " + matchingDto.getMatching_id() + 
+                        " | 회원번호: " + matchingDto.getMember_id() + 
+                        " | 혈액팩번호: " + matchingDto.getBlood_pack_id() + 
+                        " | 병원: " + matchingDto.getHospital_name() + 
+                        " | 혈액형: " + matchingDto.getBlood_type() + 
+                        " | 출고일: " + matchingDto.getShipment_date() );
+                } // for end
+            } // else end
+            System.out.println( "---------------------------------------" );
+        } // matchingView end
+
+        // [API22] 매칭 혈액팩 변경 수정
+        public void shipmentUpdate( ){
+            System.out.println( "[매칭 혈액팩 수정]" );
+            System.out.print( "수정할 매칭 상세 번호 > " ); int matching_detail_id = scan.nextInt();
+            System.out.print( "새로 연결할 혈액팩 번호 > "); int blood_pack_id = scan.nextInt();
+
+            MatchingDto matchingDto = new MatchingDto();
+            matchingDto.setMatching_id(matching_detail_id);
+            matchingDto.setBlood_pack_id(blood_pack_id);
+
+            boolean result = mc.shipmentUpdate(matchingDto);
+
+            if( result ){
+                System.out.println( "[성공] 매칭 정보 수정 완료" );
+            }else{ System.out.println( "[실패] 매칭 정보 수정 실패(번호 확인 필요)" ); }
+        
+        } // shipmentUpdate end
+
+        // [API23] 출고 취소 (논리적 삭제)
+        public void shipmentDelete( ){
+            System.out.println( "[출고 취소 및 보관 복구]" );
+            System.out.print( " 출고 취소할 혈액팩 번호 > " ); int blood_pack_id = scan.nextInt();
+
+            MatchingDto matchingDto = new MatchingDto();
+            matchingDto.setBlood_pack_id(blood_pack_id);
+
+            boolean result = mc.shipmentDelete(matchingDto);
+
+            if( result ){
+                System.out.println( "[성공] 출고가 취소되었으며, 혈액팩이 보관중으로 복구되었습니다." );
+            }else{ System.out.println( "[실패] 출고 취소 실패(번호 확인 필요)");}
+
+        } // shipmentDelete end
+
+
+    
+
+
 
 } // MainView end
