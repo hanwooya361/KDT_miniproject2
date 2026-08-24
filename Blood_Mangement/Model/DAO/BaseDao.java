@@ -8,7 +8,7 @@ public class BaseDao {
     // 1. 연동 정보
     private String url = "JDBC:mysql://127.0.0.1:3306/BloodMangement";
     private String user = "root";
-    private String password = "qlqjsdms1234";
+    private String password = "1234";
     // 2. 연동 인터페이스 , protected: 상속관계이면 다른패키지도 접근 허용
     protected Connection conn;
     // 3. 연동 메소드

@@ -34,7 +34,6 @@ CREATE TABLE blood_pack (
         REFERENCES donation_history(donation_id)
 ) AUTO_INCREMENT = 20000;
 
-
 CREATE TABLE transfusion_request (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     requester_id INT NOT NULL,
@@ -50,7 +49,7 @@ CREATE TABLE transfusion_request (
         FOREIGN KEY (requester_id)
         REFERENCES member(member_id)
 ) AUTO_INCREMENT = 30000;
-
+select * from transfusion_request;
 CREATE TABLE matching (
     matching_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,

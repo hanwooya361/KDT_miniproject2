@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 import Blood_Mangement.Controller.BloodPackController;
 import Blood_Mangement.Controller.RequestController;
+import Blood_Mangement.Model.DAO.RequestDao;
 import Blood_Mangement.Model.DTO.BloodPackDto;
 import Blood_Mangement.Model.DTO.RequestDto;
 
@@ -34,7 +35,7 @@ public class MainView {
             else if(mmenu==2){}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){}
-            else if(mmenu==5){}
+            else if(mmenu==5){break;}
             else{System.out.println("없는 메뉴입니다.");}
         }
     }
@@ -143,6 +144,9 @@ public class MainView {
         System.out.print("요청 타입(지정헌혈/혈액요청) > "); 
         String request_type = scan.next();
 
+        System.out.print("회원 이름 >");
+        String member_name = scan.next();
+
         System.out.print("환자 이름 >");
         String patient_name = scan.next();
 
@@ -160,7 +164,7 @@ public class MainView {
         LocalDate deadline = LocalDate.parse(deadline1);
         LocalDate created_at = LocalDate.now();
         
-        RequestDto requestDto = new RequestDto(request_type, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
+        RequestDto requestDto = new RequestDto(request_type, member_name, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
         if (rc.rListAdd(requestDto)) {
             System.out.println("[안내] 요청글 등록 성공");
         } 
@@ -171,22 +175,43 @@ public class MainView {
 
     // 요청 전체 목록 조회
     public void rListCheck() {
+        ArrayList<RequestDto> rlist = rc.rListCheck();
+        System.out.println("========== 요청 목록 ===========");
+        if(rlist.isEmpty()) {
+            System.out.println("요청 목록이 없습니다.");
+            return;
+        }
+        for (RequestDto list: rlist ) { System.out.println(list);}
 
     }
 
     // 요청 대기 목록 조회
     public void rWaitListCheck() {
-
+        ArrayList<RequestDto> rlist = rc.rWaitListCheck();
+        System.out.println("========== 요청 목록 ===========");
+        if(rlist.isEmpty()) {
+            System.out.println("요청 목록이 없습니다.");
+            return;
+        }
+        for (RequestDto list: rlist ) { System.out.println(list);}
     }
 
     // 요청 상태 변경
     public void rListUpdate() {
+        System.out.print("변경하고 싶은 요청 목록의 ID를 입력해주세요.");
+        int request_id = scan.nextInt();
 
+        if(rc.rListUpdate(request_id)) { 
+            System.out.print("변경하고 싶은 정보를 입력하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 >");
+            int ch = scan.nextInt();
+            
+            
+        }
+        else { System.out.println("수정 실패");}
     }
 
-    // 요청 취소
-    public void rListDelete() {
 
-    }
+
+    
 
 } // MainView end
