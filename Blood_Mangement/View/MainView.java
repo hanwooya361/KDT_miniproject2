@@ -263,7 +263,7 @@ public class MainView {
     public void matchingMenu( ){
         while( true ){
             System.out.println( "==========================" );
-            System.out.println( "💉 혈액 출고 및 매칭 관리 💉" );
+            System.out.println( "  혈액 출고 및 매칭 관리   " );
             System.out.println( "==========================" );
             System.out.println( "[1] 수혈 매칭 및 출고 등록" );
             System.out.println( "[2] 병원 출고 내역 조회" );
@@ -325,7 +325,7 @@ public class MainView {
             }else{
                 for( MatchingDto matchingDto : list ){
                     System.out.println(
-                        "매칭번호: " + matchingDto.getMatching_id() + 
+                        "매칭번호: " + matchingDto.getMatching_detail_id() + 
                         " | 회원번호: " + matchingDto.getMember_id() + 
                         " | 혈액팩번호: " + matchingDto.getBlood_pack_id() + 
                         " | 병원: " + matchingDto.getHospital_name() + 
@@ -343,7 +343,7 @@ public class MainView {
             System.out.print( "새로 연결할 혈액팩 번호 > "); int blood_pack_id = scan.nextInt();
 
             MatchingDto matchingDto = new MatchingDto();
-            matchingDto.setMatching_id(matching_detail_id);
+            matchingDto.setMatching_detail_id(matching_detail_id);
             matchingDto.setBlood_pack_id(blood_pack_id);
 
             boolean result = mc.shipmentUpdate(matchingDto);
@@ -369,10 +369,5 @@ public class MainView {
             }else{ System.out.println( "[실패] 출고 취소 실패(번호 확인 필요)");}
 
         } // shipmentDelete end
-
-
-    
-
-
 
 } // MainView end

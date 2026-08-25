@@ -118,18 +118,18 @@ public class MatchingDao extends BaseDao {
             public ArrayList<MatchingDto> matchingView() {
                 ArrayList<MatchingDto> list = new ArrayList<>(); // 레코드 정보들을 담을 리스트
                 try {
-                    String sql = "select m.matching_id, m.member_id, m.blood_pack_id, tr.hospital_name, bp.blood_type, bp.shipment_date, bp.status, tr.patient_name "
+                    String sql = "select distinct m.matching_detail_id, m.member_id, m.blood_pack_id, tr.hospital_name, bp.blood_type, bp.shipment_date, bp.status, tr.patient_name "
                             + "from matching m "
                             + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
                             + "join transfusion_request tr on m.member_id = tr.requester_id "
-                            + "order by m.matching_id desc";
+                            + "order by m.matching_detail_id desc";
                     // 2. SQL 기재 및 실행
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ResultSet rs = ps.executeQuery();
                     // 3. 레코드 하나씩 DTO에 담아 리스트에 추가
                     while (rs.next()) {
                         MatchingDto matchingDto = new MatchingDto();
-                        matchingDto.setMatching_id(rs.getInt("matching_id"));
+                        matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
                         matchingDto.setMember_id(rs.getInt("member_id"));
                         matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
                         matchingDto.setHospital_name(rs.getString("hospital_name"));
@@ -146,15 +146,17 @@ public class MatchingDao extends BaseDao {
 
             // [API22] 혈액팩 출고상태 수동 수정 구현 shipmentUpdate();
             public boolean shipmentUpdate( MatchingDto matchingDto ){ 
-                try{ String sql = "update blood_pack set blood_pack_id = ? where matching_id = ? ";
+                try{ String sql = "update matching set blood_pack_id = ? where matching_detail_id = ?";
 
                 PreparedStatement ps1 = conn.prepareStatement(sql);
                 ps1.setInt( 1, matchingDto.getBlood_pack_id( ) );
-                ps1.setInt( 2, matchingDto.getMatching_id( ) );
-                ps1.executeUpdate();
-            } catch( Exception e ){ System.out.println( e ); }
-            return false;
-
+                ps1.setInt( 2, matchingDto.getMatching_detail_id( ) );
+                int count = ps1.executeUpdate();
+                if( count >= 1 ){
+                    return true; }
+            }catch( Exception e ){ System.out.println( e ); 
+            }return false;
+            
             } // shipmentUpdate end
 
             // [API23] 출고 기록 삭제 (보통 이력 관리를 위해 삭제보다는 취소 상태로 업데이트 처리) shipmentDelete(); 
@@ -162,29 +164,14 @@ public class MatchingDao extends BaseDao {
                 try{ String sql = "update blood_pack set status = '보관중' , shipment_date = null where blood_pack_id = ?";
                 PreparedStatement ps1 = conn.prepareStatement(sql);
                 ps1.setInt(1, matchingDto.getBlood_pack_id( ) );
-                ps1.executeUpdate();
-
-                } catch( Exception e ){ System.out.println( e ); }
-                return false;
+                int count = ps1.executeUpdate();
+                if( count >= 1 ){
+                    return true; }
+                }catch( Exception e ){ System.out.println( e );         
+                }return false;
 
             } // shipmentDelete end
 
-
-
-
-                
-                   
-
-
-
-                    
-
-
-            
-
-                    
-    
-        
 
 } // class end
 
