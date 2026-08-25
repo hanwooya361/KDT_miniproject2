@@ -23,7 +23,6 @@ public class MemberDao extends BaseDao {
             ps.setString(4, memberDto.getMember_type() );
             ps.setString(5, memberDto.getDonation_date() );
             
-
             int result = ps.executeUpdate();
             if(result == 1) return true;
         } catch (Exception e) {

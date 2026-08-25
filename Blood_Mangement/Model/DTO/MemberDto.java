@@ -19,6 +19,8 @@ public class MemberDto {
         this.member_type = member_type;
         this.donation_date = donation_date;
     }
+    
+    
 
     public int getMember_id() {return member_id;} 
     public String getLogin_id() {return login_id;}
