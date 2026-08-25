@@ -15,12 +15,13 @@ public class MemberDao extends BaseDao {
     // 가입(저장)함수 
     public boolean mAdd(MemberDto memberDto){
         try {
-            String sql = "insert into member(login_id, name, phone, member_type) values( ? , ? , ? , ? )";
+            String sql = "insert into member(login_id, password, name, phone, member_type) values( ? , ?, ? , ? , ? )";
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setString(1, memberDto.getLogin_id() );
-            ps.setString(2, memberDto.getName() );
-            ps.setString(3, memberDto.getPhone() );
-            ps.setString(4, memberDto.getMember_type() );
+            ps.setString(2, memberDto.getPassword() );
+            ps.setString(3, memberDto.getName() );
+            ps.setString(4, memberDto.getPhone() );
+            ps.setString(5, memberDto.getMember_type() );
             
             int result = ps.executeUpdate();
             if(result == 1) return true;
