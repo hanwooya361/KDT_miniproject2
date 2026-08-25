@@ -1,12 +1,12 @@
 drop database if exists BloodMangement;
 create database BloodMangement;
 use BloodMangement;
-
+# asdasd
 CREATE TABLE member (
     member_id INT AUTO_INCREMENT PRIMARY KEY,
     login_id VARCHAR(30) NOT NULL UNIQUE,
-    password VARCHAR(30) NOT NULL,
-    name VARCHAR(30) NOT NULL,
+    password VARCHAR(30) NOT NULL, 
+    name VARCHAR(30) NOT NULL,  #asdasd
     phone VARCHAR(20) NOT NULL UNIQUE,
     member_type VARCHAR(20) NOT NULL,
     mcreated_at DATE
