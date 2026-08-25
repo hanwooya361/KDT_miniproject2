@@ -29,7 +29,24 @@ public class MemberDao extends BaseDao {
         } return false;
     }
 
-    
+    // 아이디 유효성 검사
+    public boolean logCheck(String login_id){
+        try{
+            String sql = "select * from member where login_id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, login_id);
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                return false;
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return true;
+    }
+
+
     // 로그인 함수
     public MemberDto mLogin(String login_id, String password){
         try {

@@ -219,17 +219,17 @@ public class MainView {
         System.out.println("비밀번호를 입력하세요");
         String password = scan.next();
 
-        MemberDto memberDto = new MemberDto( login_id, password );
-        if(mec.mLogin(memberDto)){
+        if(mec.mLogin(login_id, password)){
             System.out.println("로그인 성공");
         }else{
             System.out.println("로그인 실패");
         }
-
     }
 
     // [3] 헌혈자 전체 조회
-
+    public void mView(){
+        
+    }
     // [4] 헌혈자 개별 조회
 
     // [5] 헌혈자 정보 수정
