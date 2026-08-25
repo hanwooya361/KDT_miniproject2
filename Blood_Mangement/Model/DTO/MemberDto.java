@@ -8,6 +8,7 @@ public class MemberDto {
     private String phone;
     private String member_type;
     private String donation_date;
+    private String password;
     
 
     public MemberDto(){super();}
@@ -23,6 +24,14 @@ public class MemberDto {
     }
     
 
+
+    public MemberDto(String login_id, String name, String phone, String member_type, String password){
+        this.login_id = login_id;
+        this.name = name;
+        this.phone = phone;
+        this.member_type = member_type;
+        this.password = password;
+    }
 
     public int getMember_id() {return member_id;} 
     public String getLogin_id() {return login_id;}
