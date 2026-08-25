@@ -22,5 +22,4 @@ public class BaseDao {
     // 4. 기본생성자에 연동메소드 실행  , BaseDao 클래스로부터 상속받은 DAO들은 자동 connect 
     protected BaseDao(){connect();}
 
-    
 }
