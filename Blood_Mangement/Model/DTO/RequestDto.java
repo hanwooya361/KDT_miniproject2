@@ -11,6 +11,7 @@ public class RequestDto {
     private int requested_quantity;
     private LocalDate deadline;
     private LocalDate created_at;
+    private String status;
 
 
     public RequestDto() {}
@@ -27,7 +28,7 @@ public class RequestDto {
     }
 
     // 읽기용 생성자
-    public RequestDto( int request_id, String request_type, String member_name, String patient_name, String hospital_name, String blood_type, int requested_quantity, LocalDate deadline, LocalDate created_at){
+    public RequestDto( int request_id, String request_type, String member_name, String patient_name, String hospital_name, String blood_type, int requested_quantity, LocalDate deadline, LocalDate created_at, String status){
         this.request_id = request_id;
         this.request_type = request_type;
         this.member_name = member_name;
@@ -37,6 +38,7 @@ public class RequestDto {
         this.requested_quantity = requested_quantity;
         this.deadline = deadline;
         this.created_at = created_at;
+        this.status = status;
     }
     // 게터/세터
     public String getRequest_type() {
@@ -62,6 +64,9 @@ public class RequestDto {
     }
     public LocalDate getCreated_at() {
         return created_at;
+    }
+    public String getStatus() {
+        return status;
     }
 
     public void setRequest_type(String request_type) {
@@ -102,6 +107,7 @@ public class RequestDto {
                 ", 요청 수량 : " + requested_quantity +
                 ", 기한 : " + deadline +
                 ", 작성 날짜 : " + created_at +
+                ", 상태 : " + status +
                 '}';
     }
 }
