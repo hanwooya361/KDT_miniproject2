@@ -35,7 +35,7 @@ public class MainView {
             System.out.print("\n메뉴 선택 > ");
             int mmenu = scan.nextInt();
             if(mmenu==1){bloodPackMenu();}
-            else if(mmenu==2){memberMenu()}
+            else if(mmenu==2){memberMenu();}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){matchingMenu();}
             else if(mmenu==5){break;}
