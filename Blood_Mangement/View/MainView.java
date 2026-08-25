@@ -26,31 +26,12 @@ public class MainView {
     private MatchingController mc = MatchingController.getInstance();
     private MemberController mec = MemberController.getInstance();
 
-    public void mAdd() {
-        System.out.println("아이디를 입력하세요");
-        String login_id = scan.next();
-        System.out.println("이름을 입력하세요");
-        String name = scan.next();
-        System.out.println("전화번호를 입력하세요");
-        String phone = scan.next();
-        System.out.println("회원 유형을 선택하세요(헌혈자/수혈자)");
-        String member_type = scan.next();
-        System.out.println("비밀번호를 입력하세요");
-        String password = scan.next();
-
-        MemberDto memberDto = new MemberDto(login_id, name, phone, member_type, password);
-        if( mec.mAdd(memberDto) ){
-            System.out.println("회원가입 성공");
-        }
-        else {
-            System.out.println("회원가입 실패");
-        }
-    }
-
+    
+    // 메인
     public void run(){
         while(true){
             System.out.println("================== 메인 화면 ======================");
-            System.out.println("[1] 로그인 , [2] 회원가입 [3] 종료");
+            System.out.println("  [1] 로그인 | [2] 회원가입 | [3] 종료  ");
             System.out.println("==================================================");
             int ch = scan.nextInt();
             if(ch == 1) { mainMenu();}  // 로그인
@@ -198,7 +179,7 @@ public class MainView {
             System.out.print("메뉴 선택 >");
             int bmenu = scan.nextInt();
             if(bmenu == 1){mAdd();}
-            else if(bmenu == 2){bloodAllPirnt();}
+            else if(bmenu == 2){mLogin();}
             else if(bmenu == 3){mView();}
             else if(bmenu == 4){minView();}
             else if(bmenu == 5){mUpdate();}
@@ -209,10 +190,43 @@ public class MainView {
         }
     }
 
-    // [1] 헌혈자 회원가입
+    // [1] 회원가입
+    public void mAdd() {
+        System.out.println("아이디를 입력하세요");
+        String login_id = scan.next();
+        System.out.println("이름을 입력하세요");
+        String name = scan.next();
+        System.out.println("전화번호를 입력하세요");
+        String phone = scan.next();
+        System.out.println("회원 유형을 선택하세요(헌혈자/수혈자)");
+        String member_type = scan.next();
+        System.out.println("비밀번호를 입력하세요");
+        String password = scan.next();
+
+        MemberDto memberDto = new MemberDto(login_id, name, phone, member_type, password);
+        if( mec.mAdd(memberDto) ){
+            System.out.println("회원가입 성공");
+        }
+        else {
+            System.out.println("회원가입 실패");
+        }
+    }
 
     // [2] 헌혈자 로그인
-    public
+    public void mLogin(){
+        System.out.println("아이디를 입력하세요");
+        String login_id = scan.next();
+        System.out.println("비밀번호를 입력하세요");
+        String password = scan.next();
+
+        MemberDto memberDto = new MemberDto( login_id, password );
+        if(mec.mLogin(memberDto)){
+            System.out.println("로그인 성공");
+        }else{
+            System.out.println("로그인 실패");
+        }
+
+    }
 
     // [3] 헌혈자 전체 조회
 
