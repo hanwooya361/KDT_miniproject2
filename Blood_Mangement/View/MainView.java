@@ -28,7 +28,8 @@ public class MainView {
 
     
     // 메인
-    public void run(){
+    public void run(MemberDto loginMember){
+        this.loginMember.login = loginMember;
         while(true){
             System.out.println("================== 메인 화면 ======================");
             System.out.println("  [1] 로그인 | [2] 회원가입 | [3] 종료  ");
@@ -86,20 +87,25 @@ public class MainView {
     }
 
     // 혈액팩 등록
-    public void bloodCreate(){
-        System.out.println("==========================");
-        System.out.println("🩸혈액팩 입고🩸");
-        System.out.println("==========================");
-        System.out.print("🩸혈액팩 입력 >");
-        String bloodtype = scan.next();
-        BloodPackDto dto = new BloodPackDto();
-        dto.setBlood_type(bloodtype);
-        boolean result = bpc.bloodCreate(dto);
-        if(result){
-            System.out.println("혈액팩이 정상적으로 입고되었습니다");
-            System.out.println("상태 > 보관중");
-        }else{System.out.println("혈액팩이 정상적으로 입고에 실패했습니다.");}
-    }
+    public void bloodCreate() {
+      System.out.print("혈액형 입력 > ");
+      String bloodType = scan.next();
+
+      BloodPackDto dto = new BloodPackDto();
+      dto.setBlood_type(bloodType);
+
+      int result = bpc.bloodCreate(dto,loginMember.getMember_id());
+
+      if (result == 1) {
+          System.out.println("혈액팩 등록 성공");
+      } else if (result == 0) {
+          System.out.println(
+              "최근 2개월 이내 혈액팩 등록 이력이 있어 등록할 수 없습니다."
+          );
+      } else {
+          System.out.println("혈액팩 등록 실패");
+      }
+  }
 
     // 혈액팩 전체 조회
     public void bloodAllPirnt(){
@@ -145,21 +151,33 @@ public class MainView {
     }
 
     // 혈액팩 정보 삭제
-    public void bloodDelete(){
-        ArrayList<BloodPackDto> result = bpc.bloodAllPirnt(); 
-        if(result.isEmpty()){
-            System.out.println("삭제할혈액팩이 없습니다.");
-            return;
-         }
-        for(BloodPackDto bloodpackdto : result){
-            System.out.println("번호:" + bloodpackdto.getBlood_pack_id() + "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
-        }
-        System.out.print("삭제할 혈액팩 번호를 입력해주세요 >");
-        int blood_pack_id = scan.nextInt();
-        boolean result1 = bpc.bloodDelete(blood_pack_id);
-        if(result1)System.out.println("삭제 성공");
-        else{System.out.println("삭제 실패");}
-    }
+    public void bloodDelete() {
+      ArrayList<BloodPackDto> list =
+          bpc.bloodAllPrint(loginMember.getMember_id());
+
+      if (list.isEmpty()) {
+          System.out.println("등록된 혈액팩이 없습니다.");
+          return;
+      }
+
+      for (BloodPackDto dto : list) {
+          System.out.println(
+              "혈액팩 번호: " + dto.getBlood_pack_id() +
+              " | 혈액형: " + dto.getBlood_type() +
+              " | 상태: " + dto.getStatus()
+          );
+      }
+
+      System.out.print("삭제할 혈액팩 번호 > ");
+      int bloodPackId = scan.nextInt();
+
+      boolean result = bpc.bloodDelete(
+          bloodPackId,
+          loginMember.getMember_id()
+      );
+
+      System.out.println(result ? "삭제 성공" : "삭제 실패");
+  }
 
 
     // 로그인/회원가입

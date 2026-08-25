@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Statement;
 
 import Blood_Mangement.Model.DTO.BloodPackDto;
 
@@ -15,16 +16,125 @@ public class BloodPackDao extends BaseDao{
     private BloodPackDao bpd = BloodPackDao.getInstance();
 
     // [1] 혈액팩 등록
-    public boolean bloodCreate(BloodPackDto BloodPackDto){
-        try{
-            String sql = "insert into blood_pack(blood_type, received_date, expiration_date)values(?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 36 DAY))";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, BloodPackDto.getBlood_type());
-            int result = ps.executeUpdate();
-            if(result==1) return true;
-        }catch(SQLException e){System.out.println("혈액팩 입고 실패"+e);}
-        return false;
-    }
+    public int bloodCreate(BloodPackDto dto, int memberId) {
+      try {
+          conn.setAutoCommit(false);
+
+          // 1. 최근 2개월 이내 등록 이력 확인
+          String checkSql =
+              "SELECT donation_id " +
+              "FROM donation_history " +
+              "WHERE member_id = ? " +
+              "AND donation_date >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH) " +
+              "LIMIT 1";
+
+          try (PreparedStatement ps = conn.prepareStatement(checkSql)) {
+              ps.setInt(1, memberId);
+
+              try (ResultSet rs = ps.executeQuery()) {
+                  if (rs.next()) {
+                      conn.rollback();
+                      return 0;
+                  }
+              }
+          }
+
+          // 2. 기존 헌혈 이력 중 가장 최근 donation_id 조회
+          int donationId = 0;
+
+          String findSql =
+              "SELECT donation_id " +
+              "FROM donation_history " +
+              "WHERE member_id = ? " +
+              "ORDER BY donation_date DESC, donation_id DESC " +
+              "LIMIT 1";
+
+          try (PreparedStatement ps = conn.prepareStatement(findSql)) {
+              ps.setInt(1, memberId);
+
+              try (ResultSet rs = ps.executeQuery()) {
+                  if (rs.next()) {
+                      donationId = rs.getInt("donation_id");
+                  }
+              }
+          }
+
+          // 3. 기존 이력이 있으면 donation_date를 오늘로 변경
+          if (donationId != 0) {
+              String updateSql =
+                  "UPDATE donation_history " +
+                  "SET donation_date = CURDATE() " +
+                  "WHERE donation_id = ? AND member_id = ?";
+
+              try (PreparedStatement ps = conn.prepareStatement(updateSql)) {
+                  ps.setInt(1, donationId);
+                  ps.setInt(2, memberId);
+                  ps.executeUpdate();
+              }
+          }
+
+          // 4. 이력이 없으면 새 헌혈 이력 생성
+          else {
+              String insertDonationSql =
+                  "INSERT INTO donation_history " +
+                  "(member_id, donation_date, created_at) " +
+                  "VALUES (?, CURDATE(), CURDATE())";
+
+              try (PreparedStatement ps = conn.prepareStatement(
+                      insertDonationSql,
+                      Statement.RETURN_GENERATED_KEYS)) {
+
+                  ps.setInt(1, memberId);
+                  ps.executeUpdate();
+
+                  try (ResultSet rs = ps.getGeneratedKeys()) {
+                      if (rs.next()) {
+                          donationId = rs.getInt(1);
+                      } else {
+                          conn.rollback();
+                          return -1;
+                      }
+                  }
+              }
+          }
+
+          // 5. 로그인 회원의 donation_id로 혈액팩 등록
+          String bloodPackSql =
+              "INSERT INTO blood_pack " +
+              "(blood_type, donation_id, received_date, expiration_date) " +
+              "VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 36 DAY))";
+
+          try (PreparedStatement ps = conn.prepareStatement(bloodPackSql)) {
+              ps.setString(1, dto.getBlood_type());
+              ps.setInt(2, donationId);
+
+              if (ps.executeUpdate() != 1) {
+                  conn.rollback();
+                  return -1;
+              }
+          }
+
+          conn.commit();
+          return 1;
+
+      } catch (SQLException e) {
+          try {
+              conn.rollback();
+          } catch (SQLException rollbackException) {
+              rollbackException.printStackTrace();
+          }
+
+          System.out.println("혈액팩 등록 실패 : " + e);
+          return -1;
+
+      } finally {
+          try {
+              conn.setAutoCommit(true);
+          } catch (SQLException e) {
+              e.printStackTrace();
+          }
+      }
+  }
 
     // [2] 전체 혈액팩 조회
     public ArrayList<BloodPackDto> bloodAllPrint(){
@@ -98,14 +208,25 @@ public class BloodPackDao extends BaseDao{
         return 0;
     }
     // [6] 혈액팩 정보 삭제
-    public boolean bloodDelete(int blood_pack_id){
-        try{
-            String sql = "delete from blood_pack where blood_pack_id = ? and status = '보관중'";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, blood_pack_id);
-            int result = ps.executeUpdate();
-            return result > 0;
-        }catch(SQLException e){System.out.println("혈액팩 삭제 실패"+e);}
-        return false;
-    }
-}
+    public boolean bloodDelete(int bloodPackId, int memberId) {
+      try {
+          String sql =
+              "DELETE bp " +
+              "FROM blood_pack bp " +
+              "JOIN donation_history dh " +
+              "ON bp.donation_id = dh.donation_id " +
+              "WHERE bp.blood_pack_id = ? " +
+              "AND dh.member_id = ? " +
+              "AND bp.status = '보관중'";
+
+          PreparedStatement ps = conn.prepareStatement(sql);
+          ps.setInt(1, bloodPackId);
+          ps.setInt(2, memberId);
+
+          return ps.executeUpdate() == 1;
+
+      } catch (SQLException e) {
+          System.out.println("혈액팩 삭제 실패 : " + e);
+          return false;
+      }
+  }

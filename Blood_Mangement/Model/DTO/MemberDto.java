@@ -8,6 +8,7 @@ public class MemberDto {
     private String phone;
     private String member_type;
     private String donation_date;
+    private String loginMember;
     
 
     public MemberDto(){super();}
