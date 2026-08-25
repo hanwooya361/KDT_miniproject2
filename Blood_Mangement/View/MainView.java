@@ -25,11 +25,12 @@ public class MainView {
     private RequestController rc = RequestController.getInstance();
     private MatchingController mc = MatchingController.getInstance();
     private MemberController mec = MemberController.getInstance();
+    private MemberDto loginMember;
 
     
     // 메인
     public void run(MemberDto loginMember){
-        this.loginMember.login = loginMember;
+        this.loginMember = loginMember;
         while(true){
             System.out.println("================== 메인 화면 ======================");
             System.out.println("  [1] 로그인 | [2] 회원가입 | [3] 종료  ");
@@ -152,18 +153,18 @@ public class MainView {
 
     // 혈액팩 정보 삭제
     public void bloodDelete() {
-      ArrayList<BloodPackDto> list =
-          bpc.bloodAllPrint(loginMember.getMember_id());
+      ArrayList<BloodPackDto> list = bpc.myBloodPrint(loginMember.getMember_id());
 
       if (list.isEmpty()) {
-          System.out.println("등록된 혈액팩이 없습니다.");
-          return;
+        System.out.println("등록된 혈액팩이 없습니다.");
+        return;
       }
 
       for (BloodPackDto dto : list) {
           System.out.println(
               "혈액팩 번호: " + dto.getBlood_pack_id() +
               " | 혈액형: " + dto.getBlood_type() +
+              " | 입고일: " + dto.getReceived_date() +
               " | 상태: " + dto.getStatus()
           );
       }
@@ -202,7 +203,7 @@ public class MainView {
             else if(bmenu == 4){minView();}
             else if(bmenu == 5){mUpdate();}
             else if(bmenu == 6){dUpdate();}
-            else if(bmenu == 7){mdelete()}
+            else if(bmenu == 7){mdelete();}
             else if(bmenu == 8){break;}
             else{System.out.println("잘못된 번호입니다.");}
         }

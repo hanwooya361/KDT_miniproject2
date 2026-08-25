@@ -157,7 +157,43 @@ public class BloodPackDao extends BaseDao{
         return bloodlist;
     }
 
+    // 개별 혈액팩 조회 
+    public ArrayList<BloodPackDto> myBloodPrint(int memberId) {
+      ArrayList<BloodPackDto> bloodList = new ArrayList<>();
 
+      String sql =
+          "SELECT bp.* " +
+          "FROM blood_pack bp " +
+          "JOIN donation_history dh " +
+          "ON bp.donation_id = dh.donation_id " +
+          "WHERE dh.member_id = ? " +
+          "ORDER BY bp.blood_pack_id";
+
+      try (PreparedStatement ps = conn.prepareStatement(sql)) {
+          ps.setInt(1, memberId);
+
+          try (ResultSet rs = ps.executeQuery()) {
+              while (rs.next()) {
+                  BloodPackDto dto = new BloodPackDto();
+
+                  dto.setBlood_pack_id(rs.getInt("blood_pack_id"));
+                  dto.setBlood_type(rs.getString("blood_type"));
+                  dto.setDonation_id(rs.getInt("donation_id"));
+                  dto.setReceived_date(rs.getString("received_date"));
+                  dto.setExpiration_date(rs.getString("expiration_date"));
+                  dto.setShipment_date(rs.getString("shipment_date"));
+                  dto.setStatus(rs.getString("status"));
+
+                  bloodList.add(dto);
+              }
+          }
+      } catch (SQLException e) {
+          System.out.println("내 혈액팩 조회 실패 : " + e);
+      }
+
+      return bloodList;
+  }
+  
     // [3] 잔여 혈액팩 조회
     public ArrayList<BloodPackDto> bloodPrint(String blood_type){
         ArrayList<BloodPackDto> bloodlist = new ArrayList<>();
@@ -230,3 +266,4 @@ public class BloodPackDao extends BaseDao{
           return false;
       }
   }
+}
