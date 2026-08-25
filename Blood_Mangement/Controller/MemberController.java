@@ -17,6 +17,13 @@ public class MemberController {
         boolean result = med.mAdd(memberDto);
         return result;
     }
+
+    // 로그인
+    public boolean mLogin(MemberDto memberDto){
+        boolean result = med.mLogin(memberDto);
+        return result;
+    }
+
     // 전체조회
     public ArrayList<MemberDto> mView(){
         ArrayList<MemberDto> result = med.mView();

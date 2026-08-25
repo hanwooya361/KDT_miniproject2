@@ -15,21 +15,45 @@ public class MemberDao extends BaseDao {
     // 가입(저장)함수 
     public boolean mAdd(MemberDto memberDto){
         try {
-            String sql = "insert into board(login_id, name, phone, member_type, donation_date) values( ? , ? , ? , ? , ? )";
+            String sql = "insert into member(login_id, name, phone, member_type) values( ? , ? , ? , ? )";
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setString(1, memberDto.getLogin_id() );
             ps.setString(2, memberDto.getName() );
             ps.setString(3, memberDto.getPhone() );
             ps.setString(4, memberDto.getMember_type() );
-            ps.setString(5, memberDto.getDonation_date() );
             
-
             int result = ps.executeUpdate();
             if(result == 1) return true;
         } catch (Exception e) {
             System.out.println(e);
         } return false;
     }
+
+    // 로그인 함수
+    public boolean mLogin(MemberDto memberDto){
+        try {
+            // SQL 작성: 입력받은 로그인,비번이 모두 일치하는 레코드 조회
+            String sql = "SELECT * FROM member WHERE login_id = ? AND password = ?";
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, memberDto.getLogin_id());
+            ps.setString(2, memberDto.getPassword()); // MemberDto에 getPassword()가 구현되어 있어야 합니다.
+            
+            
+            ResultSet rs = ps.executeQuery();
+            
+            // 결과 확인 (조회된 행이 1개라도 있으면 로그인 성공)
+            if (rs.next()) {
+                System.out.println("로그인성공");
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("로그인 오류: " + e);
+        }
+        return false;
+    }
+    
+
     // 전체조회함수
     public ArrayList<MemberDto> mView(){
         ArrayList<MemberDto> mlist = new ArrayList<>();
