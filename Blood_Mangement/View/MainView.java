@@ -248,7 +248,12 @@ public class MainView {
 
     // 요청 목록 삭제
     public void rListDelete(){
-        
+        System.out.print("삭제하고 싶은 요청 목록의 ID를 입력해주세요.");
+        int request_id = scan.nextInt();
+        if(rc.rListDelete(request_id)) { 
+            System.out.println("삭제 성공");
+        }
+        else { System.out.println("삭제 실패");}
     }
 
 

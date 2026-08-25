@@ -35,4 +35,8 @@ public class RequestController {
         return rd.rListUpdate(request_id, ch, value);
     }
 
+    // [5] 헌혈 요청 목록 삭제
+    public boolean rListDelete (int request_id) {
+        return rd.rListDelete(request_id);
+    }
 }

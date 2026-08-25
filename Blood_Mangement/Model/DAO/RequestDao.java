@@ -230,5 +230,21 @@ public class RequestDao extends BaseDao {
         return false;
     }
 
+    // 요청 목록 삭제
+    public boolean rListDelete(int request_id){
+        try{
+                String sql = "delete from transfusion_request WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setInt(1, request_id);
+
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
+    }
+
 
 } // dao end
