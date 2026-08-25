@@ -8,7 +8,6 @@ public class MemberDto {
     private String phone;
     private String member_type;
     private String donation_date;
-    private String password;
     
 
     public MemberDto(){super();}
@@ -23,8 +22,6 @@ public class MemberDto {
         this.donation_date = donation_date;
     }
     
-
-
     public MemberDto(String login_id, String name, String phone, String member_type, String password){
         this.login_id = login_id;
         this.name = name;
@@ -45,7 +42,7 @@ public class MemberDto {
         this.member_id = member_id;}
     public void setLogin_id(String login_id) {
         this.login_id = login_id;}
-    public void getPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;}
     public void setName(String name) {
         this.name = name;}

@@ -18,11 +18,16 @@ public class MemberController {
         return result;
     }
 
+
     // 로그인
-    public boolean mLogin(MemberDto memberDto){
-        boolean result = med.mLogin(memberDto);
-        return result;
+    public boolean mLogin(String login_id, String password){
+        MemberDto memberDto = med.mLogin(login_id, password);
+        return memberDto != null;
     }
+
+    // 현재 로그인한 회원
+    private MemberDto loginMember = null;
+
 
     // 전체조회
     public ArrayList<MemberDto> mView(){
@@ -47,7 +52,7 @@ public class MemberController {
         boolean result = med.dUpdate(memberDto);
         return result;
     }
-    // 회원정보삭제
+    // 회원정보삭제 (탈퇴)
     public boolean mdelete(String login_id){
         return med.mdelete(login_id);
     }
