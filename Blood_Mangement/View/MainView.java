@@ -72,7 +72,7 @@ public class MainView {
             System.out.print("\n메뉴 선택 > ");
             int mmenu = scan.nextInt();
             if(mmenu==1){bloodPackMenu();}
-            else if(mmenu==2){memberMenu()}
+            else if(mmenu==2){memberMenu();}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){matchingMenu();}
             else if(mmenu==5){break;}
@@ -203,7 +203,7 @@ public class MainView {
             else if(bmenu == 4){minView();}
             else if(bmenu == 5){mUpdate();}
             else if(bmenu == 6){dUpdate();}
-            else if(bmenu == 7){mdelete()}
+            else if(bmenu == 7){mdelete();}
             else if(bmenu == 8){break;}
             else{System.out.println("잘못된 번호입니다.");}
         }
@@ -212,7 +212,6 @@ public class MainView {
     // [1] 헌혈자 회원가입
 
     // [2] 헌혈자 로그인
-    public
 
     // [3] 헌혈자 전체 조회
 
@@ -320,8 +319,6 @@ public class MainView {
         String value = scan.next();
         if(rc.rListUpdate(request_id, ch, value)) { 
             System.out.println("수정 성공");
-            
-            
         }
         else { System.out.println("수정 실패");}
     }
