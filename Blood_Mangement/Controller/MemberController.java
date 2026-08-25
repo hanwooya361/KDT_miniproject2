@@ -48,25 +48,46 @@ public class MemberController {
     }
 
     // 회원정보수정
-    public boolean mUpdate(MemberDto memberDto, String oldLoginid){
-        boolean result = med.mUpdate(memberDto, oldLoginid);
-        return result;
+    public boolean mUpdate(String oldLoginid, int ch, String value) {
+        // 1. 수정할 정보를 담을 DTO 객체 생성
+        MemberDto memberDto = new MemberDto();
+
+        if (ch == 1) {
+            memberDto.setLogin_id(value);
+        } else if (ch == 2) {
+            memberDto.setPassword(value);
+        } else if (ch == 3) {
+            memberDto.setName(value);
+        } else if (ch == 4) {
+            memberDto.setPhone(value);
+        } else if (ch == 5) {
+            memberDto.setMember_type(value);
+        } else {
+            return false; 
+        }
+
+        // 3. DTO와 선택번호, 기존아이디를 DAO로 전달
+        return med.mUpdate(memberDto, ch, oldLoginid);
     }
 
-    // 헌혈이력정보수정
-    public boolean dUpdate(MemberDto memberDto){
-        boolean result = med.dUpdate(memberDto);
-        return result;
+    // 헌혈이력정보수정/삭제
+    
+    // [1] 헌혈 이력 수정
+    public boolean dUpdate(MemberDto memberDto) {
+        return med.dUpdate(memberDto);
     }
-    // 회원정보삭제 (탈퇴)
-    public boolean mdelete(String login_id){
-        return med.mdelete(login_id);
-    }
-
-    // 헌혈이력정보삭제
-    public boolean ddelete(String login_id){
+    // [2] 헌혈 이력 삭제
+    public boolean ddelete(String login_id) {
         return med.ddelete(login_id);
     }
+
+
+    // 회원정보삭제 (탈퇴)
+    public boolean mdelete(String login_id, String password){
+        return med.mdelete(login_id, password);
+    }
+
+    
 
 
 

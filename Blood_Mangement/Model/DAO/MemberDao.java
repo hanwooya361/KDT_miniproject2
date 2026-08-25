@@ -118,21 +118,32 @@ public class MemberDao extends BaseDao {
     }
 
     // 회원정보수정
-    public boolean mUpdate(MemberDto memberDto, String oldLoginid){
-        try {
-            String sql = "update member set login_id = ?, name = ?, phone = ?, Member_type = ? where login_id = ?";
-            PreparedStatement ps = conn.prepareStatement( sql );
-            ps.setString(1, memberDto.getLogin_id());
-            ps.setString(2, memberDto.getName());
-            ps.setString(3, memberDto.getPhone());
-            ps.setString(4, memberDto.getMember_type());
-            ps.setString(5, oldLoginid);
-            int result = ps.executeUpdate();
-            if (result == 1) {return true;}
-        } catch (SQLException e) {
-            System.out.println(e);
-        }return false;
+    public boolean mUpdate(MemberDto memberDto, int ch, String oldLoginid) {
+    String sql = "";
+    if (ch == 1) sql = "UPDATE member SET login_id = ? WHERE login_id = ?";
+    else if (ch == 2) sql = "UPDATE member SET password = ? WHERE login_id = ?";
+    else if (ch == 3) sql = "UPDATE member SET name = ? WHERE login_id = ?";
+    else if (ch == 4) sql = "UPDATE member SET phone = ? WHERE login_id = ?";
+    else if (ch == 5) sql = "UPDATE member SET member_type = ? WHERE login_id = ?";
+    else return false;
+
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        
+        // 선택 항목만
+        if (ch == 1) ps.setString(1, memberDto.getLogin_id());
+        else if (ch == 2) ps.setString(1, memberDto.getPassword());
+        else if (ch == 3) ps.setString(1, memberDto.getName());
+        else if (ch == 4) ps.setString(1, memberDto.getPhone());
+        else if (ch == 5) ps.setString(1, memberDto.getMember_type());
+        
+        ps.setString(2, oldLoginid);
+        return ps.executeUpdate() == 1;
+    } catch (SQLException e) {
+        System.out.println(e);
     }
+    return false;
+}
 
     // 헌혈이력정보수정
     public boolean dUpdate(MemberDto memberDto){
@@ -147,23 +158,6 @@ public class MemberDao extends BaseDao {
             System.out.println(e);
         }return false;
     }
-
-    // 회원정보삭제(탈퇴)
-    public boolean mdelete( String login_id ){
-        try{ String sql1 = "DELETE FROM member WHERE login_id = ?";
-            PreparedStatement ps1 = conn.prepareStatement(sql1);
-            ps1.setString(1, login_id);
-            ps1.executeUpdate();
-            String sql2 = "DELETE FROM donation_history WHERE login_id = ?";
-            PreparedStatement ps2 = conn.prepareStatement(sql2);
-            ps2.setString(1, login_id);
-
-            int result = ps2.executeUpdate();
-            if( result == 1 ) return true;
-        }catch( SQLException e ){ System.out.println( e ); }
-        return false;
-    }
-
     // 헌혈이력정보만삭제
     public boolean ddelete( String login_id ){
         try{ String sql = "delete from donation_history where login_id = ?";
@@ -174,6 +168,46 @@ public class MemberDao extends BaseDao {
         }catch( SQLException e ){ System.out.println( e ); }
         return false;
     }
+
+
+    // 회원정보삭제(탈퇴)
+    public boolean mdelete( String login_id, String password ){
+        try{
+            String checkSql = "SELECT password FROM member WHERE login_id = ?";
+            PreparedStatement checkPs = conn.prepareStatement(checkSql);
+            checkPs.setString(1, login_id);
+            ResultSet rs = checkPs.executeQuery();
+
+            if (rs.next()) {
+                String dbPassword = rs.getString("password");
+                // 입력한 비밀번호와 DB 비밀번호가 다르면 삭제X
+                if (!dbPassword.equals(password)) {
+                    return false; 
+                }
+            } else {
+                return false; // 존재하지 않는 아이디
+            }
+
+            // 비밀번호 일치 시 자식 테이블 삭제
+            String sql1 = "DELETE FROM donation_history WHERE login_id = ?";
+            PreparedStatement ps1 = conn.prepareStatement(sql1);
+            ps1.setString(1, login_id);
+            ps1.executeUpdate();
+
+            // 부모 테이블 삭제
+            String sql2 = "DELETE FROM member WHERE login_id = ?";
+            PreparedStatement ps2 = conn.prepareStatement(sql2);
+            ps2.setString(1, login_id);
+
+            return ps2.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    
 
     
 }//ce

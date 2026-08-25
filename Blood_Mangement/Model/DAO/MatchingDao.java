@@ -85,64 +85,75 @@ public class MatchingDao extends BaseDao {
 
             } // shipmentCreate end
 
-            // [API20] 일별/월별 병원 출고 내역 조회 shipmentView( )
-            public ArrayList< MatchingDto > shipmentView( String shipment_date ){
-                ArrayList< MatchingDto > list = new ArrayList<>(); // 레코드 정보 들을 담을 리스트  
-                try{
-                String sql1 = "select tr.hospital_name, bp.blood_pack_id, bp.blood_type, bp.shipment_date, bp.status, tr.patient_name "
-                                + "from blood_pack bp " 
-                                + "join matching m using(blood_pack_id) "
-                                + "join transfusion_request tr on m.member_id = tr.requester_id "
-                                + "where bp.shipment_date like concat(?, '%') and bp.status = '출고완료'";
-
-                PreparedStatement ps1 = conn.prepareStatement(sql1);
-                ps1.setString(1, shipment_date);
-                ResultSet rs1 = ps1.executeQuery();
-                
-                while (rs1.next()) {
-                    MatchingDto matchingDto = new MatchingDto();
-                    matchingDto.setHospital_name(rs1.getString("hospital_name"));
-                    matchingDto.setBlood_pack_id(rs1.getInt("blood_pack_id"));
-                    matchingDto.setBlood_type( rs1.getString("blood_type") );
-                    matchingDto.setShipment_date(rs1.getString("shipment_date"));
-                    matchingDto.setStatus( rs1.getString("status") );
-                    matchingDto.setPatient_name( rs1.getString("patient_name") );
-
-                    list.add(matchingDto);
-                    }
-                }catch( Exception e ){ System.out.println( e ); }
-                return list;
-            } // shipmentView end
-
-            // [API21] 매칭 성공이력 전체 조회 matchingView( )
-            public ArrayList<MatchingDto> matchingView() {
-                ArrayList<MatchingDto> list = new ArrayList<>(); // 레코드 정보들을 담을 리스트
+            // [API20] 병원 출고 내역 조회
+            public ArrayList<MatchingDto> shipmentView(String shipment_date) {
+                ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    String sql = "select distinct m.matching_detail_id, m.member_id, m.blood_pack_id, tr.hospital_name, bp.blood_type, bp.shipment_date, bp.status, tr.patient_name "
+                    // 수정됨: GROUP BY와 max()를 제거하고 JOIN 조건을 완벽하게 세팅
+                    String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
+                            + "tr.hospital_name, tr.patient_name, "
+                            + "bp.blood_type, bp.shipment_date, bp.status "
                             + "from matching m "
                             + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
                             + "join transfusion_request tr on m.member_id = tr.requester_id "
-                            + "order by m.matching_detail_id desc";
-                    // 2. SQL 기재 및 실행
+                            + "and bp.blood_type = tr.blood_type "  // 혈액형까지 일치하는 환자 매칭
+                            + "and tr.status = '완료' "
+                            + "where bp.shipment_date like concat(?, '%') and bp.status = '출고완료' ";
+
+
                     PreparedStatement ps = conn.prepareStatement(sql);
+                    ps.setString(1, shipment_date);
                     ResultSet rs = ps.executeQuery();
-                    // 3. 레코드 하나씩 DTO에 담아 리스트에 추가
+
                     while (rs.next()) {
                         MatchingDto matchingDto = new MatchingDto();
                         matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
                         matchingDto.setMember_id(rs.getInt("member_id"));
                         matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
                         matchingDto.setHospital_name(rs.getString("hospital_name"));
+                        matchingDto.setPatient_name(rs.getString("patient_name"));
                         matchingDto.setBlood_type(rs.getString("blood_type"));
                         matchingDto.setShipment_date(rs.getString("shipment_date"));
                         matchingDto.setStatus(rs.getString("status"));
-                        matchingDto.setPatient_name(rs.getString("patient_name"));
-
                         list.add(matchingDto);
-                        }
-                }catch(Exception e) { System.out.println(e); }
-                return list; // 리스트 반환
-            } // matchingView end
+                    }
+                } catch( Exception e ) { System.out.println( e ); }
+                return list;
+            }
+
+            // [API21] 매칭 성공 이력 전체 조회
+            public ArrayList<MatchingDto> matchingView() {
+                ArrayList<MatchingDto> list = new ArrayList<>();
+                try {
+                    String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
+                            + "tr.hospital_name, tr.patient_name, "
+                            + "bp.blood_type, bp.shipment_date, bp.status "
+                            + "from matching m "
+                            + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
+                            + "join transfusion_request tr on m.member_id = tr.requester_id "
+                            + "    and bp.blood_type = tr.blood_type "
+                            + "    and tr.status = '완료' "
+                            + "where bp.status = '출고완료' ";
+
+
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+
+                    while (rs.next()) {
+                        MatchingDto matchingDto = new MatchingDto();
+                        matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
+                        matchingDto.setMember_id(rs.getInt("member_id"));
+                        matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
+                        matchingDto.setHospital_name(rs.getString("hospital_name"));
+                        matchingDto.setPatient_name(rs.getString("patient_name"));
+                        matchingDto.setBlood_type(rs.getString("blood_type"));
+                        matchingDto.setShipment_date(rs.getString("shipment_date"));
+                        matchingDto.setStatus(rs.getString("status"));
+                        list.add(matchingDto);
+                    }
+                } catch ( Exception e ) { System.out.println( e ); }
+                return list;
+            }
 
             // [API22] 혈액팩 출고상태 수동 수정 구현 shipmentUpdate();
             public boolean shipmentUpdate( MatchingDto matchingDto ){ 
@@ -171,7 +182,6 @@ public class MatchingDao extends BaseDao {
                 }return false;
 
             } // shipmentDelete end
-
 
 } // class end
 
