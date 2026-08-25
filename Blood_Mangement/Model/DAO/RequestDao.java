@@ -3,6 +3,7 @@ package Blood_Mangement.Model.DAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import Blood_Mangement.Model.DTO.RequestDto;
@@ -145,27 +146,104 @@ public class RequestDao extends BaseDao {
     }
 
     // 요청 상태 변경
-    public boolean rListUpdate(int request_id) {
-        try{
-            String sql = "update transfusion_request set( ";
-            PreparedStatement ps = conn.prepareStatement( sql );
-            ps.setString(1, requestDto.getRequest_type());
-            int memberId = findMemberId(requestDto.getMember_name());
-            ps.setInt(2, memberId);
-            ps.setString(3, requestDto.getPatient_name());
-            ps.setString(4, requestDto.getHospital_name());
-            ps.setString(5, requestDto.getBlood_type());
-            ps.setInt(6, requestDto.getRequested_quantity());
-            ps.setDate(7, java.sql.Date.valueOf(requestDto.getDeadline()));
-            ps.setDate(8, java.sql.Date.valueOf(requestDto.getCreated_at()));
+    public boolean rListUpdate(int request_id, int ch, String value) {
+        if( ch == 1 ){
+            try{
+                String sql = "UPDATE transfusion_request SET blood_type = ? WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setString(1, value);
+                ps.setInt(2, request_id);
 
-            int result = ps.executeUpdate();
-            if(result==1) return true;
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
         }
-        catch(SQLException e){
-            System.out.println("실패"+e);
+
+        else if( ch == 2 ){
+            try{
+                String sql = "UPDATE transfusion_request SET patient_name = ? WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setString(1, value);
+                ps.setInt(2, request_id);
+
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
         }
+
+        else if( ch == 3 ){
+            try{
+                String sql = "UPDATE transfusion_request SET hostpital_name = ? WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setString(1, value);
+                ps.setInt(2, request_id);
+
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
+        }
+
+        else if( ch == 4 ){
+            try{
+                String sql = "UPDATE transfusion_request SET deadline = ? WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setDate(1, java.sql.Date.valueOf(value));
+                ps.setInt(2, request_id);
+
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
+        }
+
+        else if( ch == 5 ){
+            try{
+                String sql = "UPDATE transfusion_request SET requested_quantity = ? WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setInt(1, Integer.parseInt(value));
+                ps.setInt(2, request_id);
+
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
+        }
+        
         return false;
+    }
+
+    // 요청 목록 삭제
+    public boolean rListDelete(int request_id){
+        try{
+                String sql = "delete from transfusion_request WHERE request_id = ?";
+                PreparedStatement ps = conn.prepareStatement( sql );
+                ps.setInt(1, request_id);
+
+                int result = ps.executeUpdate();
+                if(result==1) return true;
+            }
+            catch(SQLException e){
+                System.out.println("실패"+e);
+            }
+            return false;
     }
 
 
