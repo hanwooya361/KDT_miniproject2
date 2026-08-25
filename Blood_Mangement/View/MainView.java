@@ -36,7 +36,7 @@ public class MainView {
             System.out.println("  [1] 로그인 | [2] 회원가입 | [3] 종료  ");
             System.out.println("==================================================");
             int ch = scan.nextInt();
-            if(ch == 1) { mainMenu();}  // 로그인
+            if(ch == 1) { mLogin();}  // 로그인
             else if( ch == 2 ) { mAdd(); } // 회원가입
             else if( ch == 3 ) { break; } // 종료
         }
@@ -240,7 +240,9 @@ public class MainView {
             System.out.println("로그인 성공");
         }else{
             System.out.println("로그인 실패");
+            mLogin();
         }
+        mainMenu();
     }
 
     // [3] 헌혈자 전체 조회
