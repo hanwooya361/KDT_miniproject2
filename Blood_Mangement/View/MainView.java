@@ -43,7 +43,6 @@ public class MainView {
         }
     }
 
-
     public void bloodPackMenu(){
         bpc.bloodUpdate();
         while (true){
@@ -143,6 +142,50 @@ public class MainView {
         if(result1)System.out.println("삭제 성공");
         else{System.out.println("삭제 실패");}
     }
+
+
+    // 로그인/회원가입
+    public void memberMenu(){
+        while (true){
+            System.out.println("\n==================================================");
+            System.out.println("               🩸헌혈자 / 헌혈 이력 관리");
+            System.out.println("==================================================");
+            System.out.println(" [1] 헌혈자 회원가입");
+            System.out.println(" [2] 헌혈자 로그인");
+            System.out.println(" [3] 헌혈자 전체 조회");
+            System.out.println(" [4] 헌혈자 개별 조회");
+            System.out.println(" [5] 헌혈자 정보 수정");
+            System.out.println(" [6] 헌혈 이력 정보 수정");
+            System.out.println(" [7] 회원 탈퇴");
+            System.out.println(" [8] 이전메뉴");
+            System.out.print("메뉴 선택 >");
+            int bmenu = scan.nextInt();
+            if(bmenu == 1){mAdd();}
+            else if(bmenu == 2){bloodAllPirnt();}
+            else if(bmenu == 3){mView();}
+            else if(bmenu == 4){minView();}
+            else if(bmenu == 5){mUpdate();}
+            else if(bmenu == 6){dUpdate();}
+            else if(bmenu == 7){mdelete()}
+            else if(bmenu == 8){break;}
+            else{System.out.println("잘못된 번호입니다.");}
+        }
+    }
+
+    // [1] 헌혈자 회원가입
+
+    // [2] 헌혈자 로그인
+    public
+
+    // [3] 헌혈자 전체 조회
+
+    // [4] 헌혈자 개별 조회
+
+    // [5] 헌혈자 정보 수정
+
+    // [6] 헌혈 이력 정보 수정
+    
+    // [7] 회원 탈퇴
 
     // ============= 수혈 요청 관리 ==============
     public void requestMenu(){

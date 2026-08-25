@@ -1,5 +1,5 @@
 package Blood_Mangement.Model.DTO;
-//정우의 홈그라운드
+
 public class MemberDto {
     private int member_id;
     private String login_id;
