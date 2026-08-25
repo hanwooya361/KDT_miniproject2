@@ -103,16 +103,12 @@ public class MatchingDao extends BaseDao {
                     // PreparedStatement : SQL 실행 객체
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ps.setString(1, shipment_date);  // ? 자리에 shipment_date 대입
-                    
                     // ResultSet : SQL 실행 결과(조회된 데이터들)
                     ResultSet rs = ps.executeQuery();
-                    
                     // while문 : 조회된 데이터가 있을 때까지 반복
                     while (rs.next()) {
                         // DTO 객체 생성 (데이터 담을 그릇)
                         MatchingDto matchingDto = new MatchingDto();
-                        
-                        // rs.getXXX("필드명") : 조회된 데이터에서 필드값 가져오기
                         matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
                         matchingDto.setMember_id(rs.getInt("member_id"));
                         matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
@@ -135,27 +131,19 @@ public class MatchingDao extends BaseDao {
             public ArrayList<MatchingDto> matchingView() {
                 ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    // SQL 작성 (DML - select)
                     String sql = "select distinct m.matching_detail_id, m.member_id, m.blood_pack_id, " +
                                 "tr.hospital_name, tr.patient_name, bp.blood_type, bp.shipment_date, bp.status " +
                                 "from matching m " +
                                 "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id " +
                                 "join transfusion_request tr on bp.blood_type = tr.blood_type " +
-                                "where tr.status = '완료' " +  // 완료된 요청만 조회
+                                "where tr.status = '완료' " + 
                                 "order by m.matching_detail_id desc";
                     
-                    // PreparedStatement : SQL 실행 객체
                     PreparedStatement ps = conn.prepareStatement(sql);
-                    
-                    // ResultSet : SQL 실행 결과(조회된 데이터들)
                     ResultSet rs = ps.executeQuery();
-                    
-                    // while문 : 조회된 데이터가 있을 때까지 반복
+                
                     while (rs.next()) {
-                        // DTO 객체 생성 (데이터 담을 그릇)
                         MatchingDto matchingDto = new MatchingDto();
-                        
-                        // rs.getXXX("필드명") : 조회된 데이터에서 필드값 가져오기
                         matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
                         matchingDto.setMember_id(rs.getInt("member_id"));
                         matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
@@ -165,7 +153,6 @@ public class MatchingDao extends BaseDao {
                         matchingDto.setShipment_date(rs.getString("shipment_date"));
                         matchingDto.setStatus(rs.getString("status"));
                         
-                        // 리스트에 추가
                         list.add(matchingDto);
                     }
                 } catch(Exception e) { 
