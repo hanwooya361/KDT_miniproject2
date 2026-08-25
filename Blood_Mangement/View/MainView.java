@@ -240,7 +240,7 @@ public class MainView {
             System.out.println("로그인 성공");
         }else{
             System.out.println("로그인 실패");
-            mLogin();
+            run(loginMember);
         }
         mainMenu();
     }
