@@ -85,31 +85,26 @@ public class MatchingDao extends BaseDao {
 
             } // shipmentCreate end
 
-            // [API20] 일별/월별 병원 출고 내역 조회
+            // [API20] 병원 출고 내역 조회
             public ArrayList<MatchingDto> shipmentView(String shipment_date) {
                 ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    // SQL 작성: 회원 ID로 조인 + GROUP BY & max()로 안전하게 1건씩 조회
+                    // 수정됨: GROUP BY와 max()를 제거하고 JOIN 조건을 완벽하게 세팅
                     String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
-                            + "max(tr.hospital_name) as hospital_name, "
-                            + "max(tr.patient_name) as patient_name, "
+                            + "tr.hospital_name, tr.patient_name, "
                             + "bp.blood_type, bp.shipment_date, bp.status "
                             + "from matching m "
                             + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
                             + "join transfusion_request tr on m.member_id = tr.requester_id "
-                            + "where bp.shipment_date like concat(?, '%') "
-                            + "and bp.status = '출고완료' "
-                            + "group by m.matching_detail_id, m.member_id, m.blood_pack_id, bp.blood_type, bp.shipment_date, bp.status "
-                            + "order by bp.shipment_date desc";
-                    
-                    // PreparedStatement : SQL 실행 객체
+                            + "and bp.blood_type = tr.blood_type "  // 혈액형까지 일치하는 환자 매칭
+                            + "and tr.status = '완료' "
+                            + "where bp.shipment_date like concat(?, '%') and bp.status = '출고완료' ";
+
+
                     PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setString(1, shipment_date); // ? 자리에 입력받은 조회 날짜 대입
-                    
-                    // ResultSet : SQL 실행 결과
+                    ps.setString(1, shipment_date);
                     ResultSet rs = ps.executeQuery();
-                    
-                    // while문 : 조회된 데이터가 있을 때까지 반복
+
                     while (rs.next()) {
                         MatchingDto matchingDto = new MatchingDto();
                         matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
@@ -120,34 +115,30 @@ public class MatchingDao extends BaseDao {
                         matchingDto.setBlood_type(rs.getString("blood_type"));
                         matchingDto.setShipment_date(rs.getString("shipment_date"));
                         matchingDto.setStatus(rs.getString("status"));
-                        
                         list.add(matchingDto);
                     }
-                } catch( Exception e ) { 
-                    System.out.println( e );
-                }
+                } catch( Exception e ) { System.out.println( e ); }
                 return list;
-            } // shipmentView end
+            }
 
             // [API21] 매칭 성공 이력 전체 조회
             public ArrayList<MatchingDto> matchingView() {
                 ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    // 배운 문법: JOIN + GROUP BY + 집계함수 max() + AS 별칭 + ORDER BY DESC
                     String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
-                            + "max(tr.hospital_name) as hospital_name, "
-                            + "max(tr.patient_name) as patient_name, "
+                            + "tr.hospital_name, tr.patient_name, "
                             + "bp.blood_type, bp.shipment_date, bp.status "
                             + "from matching m "
                             + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
                             + "join transfusion_request tr on m.member_id = tr.requester_id "
-                            + "where bp.status = '출고완료' "
-                            + "group by m.matching_detail_id, m.member_id, m.blood_pack_id, bp.blood_type, bp.shipment_date, bp.status "
-                            + "order by m.matching_detail_id desc";
-                    
+                            + "    and bp.blood_type = tr.blood_type "
+                            + "    and tr.status = '완료' "
+                            + "where bp.status = '출고완료' ";
+
+
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ResultSet rs = ps.executeQuery();
-                
+
                     while (rs.next()) {
                         MatchingDto matchingDto = new MatchingDto();
                         matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
@@ -158,14 +149,11 @@ public class MatchingDao extends BaseDao {
                         matchingDto.setBlood_type(rs.getString("blood_type"));
                         matchingDto.setShipment_date(rs.getString("shipment_date"));
                         matchingDto.setStatus(rs.getString("status"));
-                        
                         list.add(matchingDto);
                     }
-                } catch ( Exception e ) { 
-                    System.out.println( e );
-                }
+                } catch ( Exception e ) { System.out.println( e ); }
                 return list;
-            } // matchingView end
+            }
 
             // [API22] 혈액팩 출고상태 수동 수정 구현 shipmentUpdate();
             public boolean shipmentUpdate( MatchingDto matchingDto ){ 
