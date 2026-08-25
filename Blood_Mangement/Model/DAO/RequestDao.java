@@ -72,7 +72,8 @@ public class RequestDao extends BaseDao {
             "r.blood_type, " +
             "r.requested_quantity, " +
             "r.deadline, " +
-            "r.created_at " +
+            "r.created_at, " +
+            "r.status " +
             "FROM transfusion_request r " +
             "JOIN member m ON r.requester_id = m.member_id";
 
@@ -91,7 +92,8 @@ public class RequestDao extends BaseDao {
                 rs.getString("blood_type"),
                 rs.getInt("requested_quantity"),
                 rs.getDate("deadline").toLocalDate(),
-                rs.getDate("created_at").toLocalDate()
+                rs.getDate("created_at").toLocalDate(),
+                rs.getString("status")
                 ));
             }
         } catch (SQLException e) {
@@ -115,7 +117,8 @@ public class RequestDao extends BaseDao {
             "r.blood_type, " +
             "r.requested_quantity, " +
             "r.deadline, " +
-            "r.created_at " +
+            "r.created_at, " +
+            "r.status " +
             "FROM transfusion_request r " +
             "JOIN member m ON r.requester_id = m.member_id " + 
             "WHERE r.status = '대기중' " ;
@@ -135,7 +138,8 @@ public class RequestDao extends BaseDao {
                 rs.getString("blood_type"),
                 rs.getInt("requested_quantity"),
                 rs.getDate("deadline").toLocalDate(),
-                rs.getDate("created_at").toLocalDate()
+                rs.getDate("created_at").toLocalDate(),
+                rs.getString("status")
                 ));
             }
         } catch (SQLException e) {
