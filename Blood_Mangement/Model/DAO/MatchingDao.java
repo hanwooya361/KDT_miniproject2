@@ -89,25 +89,28 @@ public class MatchingDao extends BaseDao {
             public ArrayList<MatchingDto> shipmentView(String shipment_date) {
                 ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    // SQL 작성 (DML - select)
-                    String sql = "select distinct m.matching_detail_id, m.member_id, m.blood_pack_id, " +
-                                "tr.hospital_name, tr.patient_name, bp.blood_type, bp.shipment_date, bp.status " +
-                                "from matching m " +
-                                "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id " +
-                                "join transfusion_request tr on bp.blood_type = tr.blood_type " +
-                                "where bp.shipment_date like concat(?, '%') " + // "2026-08-19" 로 시작하는 모든 데이터를 조회
-                                "  and bp.status = '출고완료' " +
-                                "  and tr.status = '완료' " +
-                                "order by bp.shipment_date desc";
+                    // SQL 작성: 회원 ID로 조인 + GROUP BY & max()로 안전하게 1건씩 조회
+                    String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
+                            + "max(tr.hospital_name) as hospital_name, "
+                            + "max(tr.patient_name) as patient_name, "
+                            + "bp.blood_type, bp.shipment_date, bp.status "
+                            + "from matching m "
+                            + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
+                            + "join transfusion_request tr on m.member_id = tr.requester_id "
+                            + "where bp.shipment_date like concat(?, '%') "
+                            + "and bp.status = '출고완료' "
+                            + "group by m.matching_detail_id, m.member_id, m.blood_pack_id, bp.blood_type, bp.shipment_date, bp.status "
+                            + "order by bp.shipment_date desc";
                     
                     // PreparedStatement : SQL 실행 객체
                     PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setString(1, shipment_date);  // ? 자리에 shipment_date 대입
-                    // ResultSet : SQL 실행 결과(조회된 데이터들)
+                    ps.setString(1, shipment_date); // ? 자리에 입력받은 조회 날짜 대입
+                    
+                    // ResultSet : SQL 실행 결과
                     ResultSet rs = ps.executeQuery();
+                    
                     // while문 : 조회된 데이터가 있을 때까지 반복
                     while (rs.next()) {
-                        // DTO 객체 생성 (데이터 담을 그릇)
                         MatchingDto matchingDto = new MatchingDto();
                         matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
                         matchingDto.setMember_id(rs.getInt("member_id"));
@@ -118,26 +121,29 @@ public class MatchingDao extends BaseDao {
                         matchingDto.setShipment_date(rs.getString("shipment_date"));
                         matchingDto.setStatus(rs.getString("status"));
                         
-                        // 리스트에 추가
                         list.add(matchingDto);
                     }
-                } catch(Exception e) { 
-                    System.out.println(e);
+                } catch( Exception e ) { 
+                    System.out.println( e );
                 }
                 return list;
             } // shipmentView end
 
-            // [API21] 매칭 성공이력 전체 조회
+            // [API21] 매칭 성공 이력 전체 조회
             public ArrayList<MatchingDto> matchingView() {
                 ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    String sql = "select distinct m.matching_detail_id, m.member_id, m.blood_pack_id, " +
-                                "tr.hospital_name, tr.patient_name, bp.blood_type, bp.shipment_date, bp.status " +
-                                "from matching m " +
-                                "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id " +
-                                "join transfusion_request tr on bp.blood_type = tr.blood_type " +
-                                "where tr.status = '완료' " + 
-                                "order by m.matching_detail_id desc";
+                    // 배운 문법: JOIN + GROUP BY + 집계함수 max() + AS 별칭 + ORDER BY DESC
+                    String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
+                            + "max(tr.hospital_name) as hospital_name, "
+                            + "max(tr.patient_name) as patient_name, "
+                            + "bp.blood_type, bp.shipment_date, bp.status "
+                            + "from matching m "
+                            + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
+                            + "join transfusion_request tr on m.member_id = tr.requester_id "
+                            + "where bp.status = '출고완료' "
+                            + "group by m.matching_detail_id, m.member_id, m.blood_pack_id, bp.blood_type, bp.shipment_date, bp.status "
+                            + "order by m.matching_detail_id desc";
                     
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ResultSet rs = ps.executeQuery();
@@ -155,8 +161,8 @@ public class MatchingDao extends BaseDao {
                         
                         list.add(matchingDto);
                     }
-                } catch(Exception e) { 
-                    System.out.println(e);
+                } catch ( Exception e ) { 
+                    System.out.println( e );
                 }
                 return list;
             } // matchingView end

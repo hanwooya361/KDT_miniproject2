@@ -325,10 +325,7 @@ public class MainView {
             }else{
                 for( MatchingDto matchingDto : list ){
                     System.out.println(
-                        "매칭번호: " + matchingDto.getMatching_detail_id() + 
-                        " | 회원번호: " + matchingDto.getMember_id() + 
-                        " | 혈액팩번호: " + matchingDto.getBlood_pack_id() + 
-                        " | 병원: " + matchingDto.getHospital_name() + 
+                        "병원: " + matchingDto.getHospital_name() + 
                         " | 혈액형: " + matchingDto.getBlood_type() + 
                         " | 출고일: " + matchingDto.getShipment_date() );
                 } // for end
