@@ -29,10 +29,16 @@ public class MainView {
     public void mAdd() {
         System.out.println("아이디를 입력하세요");
         String login_id = scan.next();
+        System.out.println("이름을 입력하세요");
+        String name = scan.next();
+        System.out.println("전화번호를 입력하세요");
+        String phone = scan.next();
+        System.out.println("회원 유형을 선택하세요(헌혈자/수혈자)");
+        String member_type = scan.next();
         System.out.println("비밀번호를 입력하세요");
         String password = scan.next();
 
-        MemberDto memberDto = new MemberDto(login_id, password);
+        MemberDto memberDto = new MemberDto(login_id, name, phone, member_type, password);
         if( mec.mAdd(memberDto) ){
             System.out.println("회원가입 성공");
         }

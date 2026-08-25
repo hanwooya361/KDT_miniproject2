@@ -21,8 +21,11 @@ public class MemberDto {
         this.donation_date = donation_date;
     }
 
-    public MemberDto(String login_id, String password){
+    public MemberDto(String login_id, String name, String phone, String member_type, String password){
         this.login_id = login_id;
+        this.name = name;
+        this.phone = phone;
+        this.member_type = member_type;
         this.password = password;
     }
 
