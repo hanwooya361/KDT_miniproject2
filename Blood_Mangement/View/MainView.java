@@ -195,14 +195,13 @@ public class MainView {
             System.out.println(" [6] 이전메뉴");
             System.out.print("메뉴 선택 >");
             int bmenu = scan.nextInt();
-            if(bmenu == 1){mAdd();}
-            else if(bmenu == 2){mLogin();}
-            else if(bmenu == 3){mView();}
-            else if(bmenu == 4){minView();}
-            else if(bmenu == 5){mUpdate();}
-            else if(bmenu == 6){dUpdate();}
-            else if(bmenu == 7){mdelete();}
-            else if(bmenu == 8){break;}
+            
+            if(bmenu == 1){mView();}
+            else if(bmenu == 2){minView();}
+            else if(bmenu == 3){mUpdate();}
+            else if(bmenu == 4){dUpdate();}
+            else if(bmenu == 5){mdelete();}
+            else if(bmenu == 6){break;}
             else{System.out.println("잘못된 번호입니다.");}
         }
     }
@@ -238,10 +237,10 @@ public class MainView {
 
         if(mec.mLogin(login_id, password)){
             System.out.println("로그인 성공");
-            
+            mainMenu();
         }else{
             System.out.println("로그인 실패");
-            mLogin();
+            run(loginMember);
         }
         mainMenu();
     }
