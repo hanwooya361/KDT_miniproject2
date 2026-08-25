@@ -29,28 +29,46 @@ public class MemberDao extends BaseDao {
         } return false;
     }
 
+    // 아이디 유효성 검사
+    public boolean logCheck(String login_id){
+        try{
+            String sql = "select * from member where login_id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, login_id);
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                return false;
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return true;
+    }
+
+
     // 로그인 함수
-    public boolean mLogin(MemberDto memberDto){
+    public MemberDto mLogin(String login_id, String password){
         try {
             // SQL 작성: 입력받은 로그인,비번이 모두 일치하는 레코드 조회
             String sql = "SELECT * FROM member WHERE login_id = ? AND password = ?";
-            
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, memberDto.getLogin_id());
-            ps.setString(2, memberDto.getPassword()); // MemberDto에 getPassword()가 구현되어 있어야 합니다.
-            
+            ps.setString(1, login_id);
+            ps.setString(2, password); // MemberDto에 getPassword()가 구현되어 있어야 합니다.
             
             ResultSet rs = ps.executeQuery();
             
             // 결과 확인 (조회된 행이 1개라도 있으면 로그인 성공)
             if (rs.next()) {
-                System.out.println("로그인성공");
-                return true;
+                MemberDto memberDto = new MemberDto();
+                memberDto.setLogin_id(rs.getString("login_id"));
+                memberDto.setPassword(rs.getString("password"));
+                return memberDto;
             }
         } catch (Exception e) {
             System.out.println("로그인 오류: " + e);
         }
-        return false;
+        return null;
     }
     
 
@@ -130,7 +148,7 @@ public class MemberDao extends BaseDao {
         }return false;
     }
 
-    // 회원정보삭제
+    // 회원정보삭제(탈퇴)
     public boolean mdelete( String login_id ){
         try{ String sql1 = "DELETE FROM member WHERE login_id = ?";
             PreparedStatement ps1 = conn.prepareStatement(sql1);
