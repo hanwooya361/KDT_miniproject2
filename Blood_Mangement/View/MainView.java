@@ -53,7 +53,7 @@ public class MainView {
             System.out.print("\n메뉴 선택 > ");
             int mmenu = scan.nextInt();
             if(mmenu==1){bloodPackMenu();}
-            else if(mmenu==2){memberMenu()}
+            else if(mmenu==2){memberMenu();}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){matchingMenu();}
             else if(mmenu==5){break;}
@@ -168,24 +168,20 @@ public class MainView {
             System.out.println("\n==================================================");
             System.out.println("               🩸헌혈자 / 헌혈 이력 관리");
             System.out.println("==================================================");
-            System.out.println(" [1] 헌혈자 회원가입");
-            System.out.println(" [2] 헌혈자 로그인");
-            System.out.println(" [3] 헌혈자 전체 조회");
-            System.out.println(" [4] 헌혈자 개별 조회");
-            System.out.println(" [5] 헌혈자 정보 수정");
-            System.out.println(" [6] 헌혈 이력 정보 수정");
-            System.out.println(" [7] 회원 탈퇴");
-            System.out.println(" [8] 이전메뉴");
+            System.out.println(" [1] 헌혈자 전체 조회");
+            System.out.println(" [2] 헌혈자 개별 조회");
+            System.out.println(" [3] 헌혈자 정보 수정");
+            System.out.println(" [4] 헌혈이력 정보 수정/삭제");
+            System.out.println(" [5] 회원 탈퇴");
+            System.out.println(" [6] 이전메뉴");
             System.out.print("메뉴 선택 >");
             int bmenu = scan.nextInt();
-            if(bmenu == 1){mAdd();}
-            else if(bmenu == 2){mLogin();}
-            else if(bmenu == 3){mView();}
-            else if(bmenu == 4){minView();}
-            else if(bmenu == 5){mUpdate();}
-            else if(bmenu == 6){dUpdate();}
-            else if(bmenu == 7){mdelete()}
-            else if(bmenu == 8){break;}
+            if(bmenu == 1){mView();}
+            else if(bmenu == 2){minView();}
+            else if(bmenu == 3){mUpdate();}
+            else if(bmenu == 4){donationMenu();}
+            else if(bmenu == 5){mdelete();}
+            else if(bmenu == 6){break;}
             else{System.out.println("잘못된 번호입니다.");}
         }
     }
@@ -228,15 +224,115 @@ public class MainView {
 
     // [3] 헌혈자 전체 조회
     public void mView(){
-        
+        ArrayList<MemberDto> mlist = mec.mView();
+        System.out.println("========== 회원 목록 ===========");
+        if(mlist.isEmpty()){
+            System.out.println("목록이 존재하지 않습니다.");
+            return;
+        }
+        for (MemberDto listm : mlist) {
+            System.out.println(listm);
+        }
     }
     // [4] 헌혈자 개별 조회
-
+    public void minView(){
+        MemberDto minlist = mec.minView();
+        System.out.println("========== 회원 목록 ===========");
+        if (minlist == null) {
+            System.out.println("목록이 존재하지 않습니다.");
+            return;
+        }
+        System.out.println("아이디 : " + minlist.getLogin_id());
+        System.out.println("이름 : " + minlist.getName());
+        System.out.println("전화번호 : " + minlist.getPhone());
+        System.out.println("회원구분 : " + minlist.getMember_type());
+    }
     // [5] 헌혈자 정보 수정
+    public void mUpdate(){
+        System.out.println("변경하고 싶은 아이디 입력: "); String oldLoginid = scan.next();
+        System.out.println("변경할 번호를 선택하세요. [1]아이디 [2]비밀번호 [3]이름 [4]폰번호 [5]가입유형");
+        int ch = scan.nextInt();
+        System.out.println("변경내용을 작성하세요: "); String value = scan.next();
+        // Controller 호출
+        boolean result = mec.mUpdate(oldLoginid, ch, value);
+        
+        if (result) {
+            System.out.println("수정 성공");
+        } else {
+            System.out.println("수정 실패 (아이디를 찾을 수 없거나 올바르지 않은 번호입니다.)");
+        }
+    }
+    // [6] 헌혈 이력 정보 수정/삭제
+    
+    public void donationMenu() {
+        System.out.println("\n========== 헌혈 이력 관리 ===========");
+        System.out.println("[1] 헌혈 이력 수정  [2] 헌혈 이력 삭제");
+        System.out.print("선택: ");
+        int ch = scan.nextInt();
 
-    // [6] 헌혈 이력 정보 수정
+        if (ch == 1) {
+            dUpdate();  // 헌혈 이력 수정 메소드 호출
+        } else if (ch == 2) {
+            ddelete();  // 헌혈 이력 삭제 메소드 호출
+        } else {
+            System.out.println("잘못된 입력입니다.");
+        }
+    }
+    public void dUpdate(){
+        System.out.println("========== 헌혈 이력 수정 ===========");
+        System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력: ");
+        String login_id = scan.next();
+        
+        System.out.print("수정할 새로운 헌혈 날짜 입력 (예: 2026-08-25): ");
+        String donation_date = scan.next();
+
+        MemberDto memberDto = new MemberDto();
+        memberDto.setLogin_id(login_id);
+        memberDto.setDonation_date(donation_date);
+        boolean result = mec.dUpdate(memberDto);
+
+        if (result) {
+            System.out.println(">> 헌혈 이력 수정 성공");
+        } else {
+            System.out.println(">> 헌혈 이력 수정 실패 (아이디를 찾을 수 없거나 DB 오류)");
+        }
+    } 
+
+    public void ddelete(){
+        System.out.println("\n========== 헌혈 이력 삭제 ===========");
+        System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력: ");
+        String login_id = scan.next();
+
+        System.out.print("정말로 삭제하시겠습니까? (1:예 / 2:아니오): ");
+        int confirm = scan.nextInt();
+
+        if (confirm == 1) {
+            // Controller의 ddelete 호출
+            boolean result = mec.ddelete(login_id);
+
+            if (result) {
+                System.out.println(">> 헌혈 이력이 성공적으로 삭제되었습니다.");
+            } else {
+                System.out.println(">> 삭제 실패 (삭제할 이력이 없거나 아이디 오류)");
+            }
+        } else {
+            System.out.println(">> 삭제가 취소되었습니다.");
+        }
+    }
     
     // [7] 회원 탈퇴
+    public void mdelete(){
+        System.out.println("\n========== 회원 탈퇴 ===========");
+        System.out.print("탈퇴할 회원의 아이디 입력: "); String login_id = scan.next();
+        System.out.println("비밀번호 확인: "); String password = scan.next();
+
+        if(mec.mdelete(login_id, password)){
+            System.out.println("회원 탈퇴 성공");
+        }
+        else{System.out.println("비밀번호가 일치하지 않습니다.");}
+    }
+
+
 
     // ============= 수혈 요청 관리 ==============
     public void requestMenu(){
