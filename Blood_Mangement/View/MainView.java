@@ -3,14 +3,17 @@ package Blood_Mangement.View;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.net.Socket;
 import java.time.LocalDate;
 
 import Blood_Mangement.Controller.BloodPackController;
 import Blood_Mangement.Controller.MatchingController;
+import Blood_Mangement.Controller.MemberController;
 import Blood_Mangement.Controller.RequestController;
 import Blood_Mangement.Model.DAO.RequestDao;
 import Blood_Mangement.Model.DTO.BloodPackDto;
 import Blood_Mangement.Model.DTO.MatchingDto;
+import Blood_Mangement.Model.DTO.MemberDto;
 import Blood_Mangement.Model.DTO.RequestDto;
 
 public class MainView {
@@ -21,8 +24,42 @@ public class MainView {
     private BloodPackController bpc = BloodPackController.getInstance();
     private RequestController rc = RequestController.getInstance();
     private MatchingController mc = MatchingController.getInstance();
+    private MemberController mec = MemberController.getInstance();
+
+    public void mAdd() {
+        System.out.println("아이디를 입력하세요");
+        String login_id = scan.next();
+        System.out.println("이름을 입력하세요");
+        String name = scan.next();
+        System.out.println("전화번호를 입력하세요");
+        String phone = scan.next();
+        System.out.println("회원 유형을 선택하세요(헌혈자/수혈자)");
+        String member_type = scan.next();
+        System.out.println("비밀번호를 입력하세요");
+        String password = scan.next();
+
+        MemberDto memberDto = new MemberDto(login_id, name, phone, member_type, password);
+        if( mec.mAdd(memberDto) ){
+            System.out.println("회원가입 성공");
+        }
+        else {
+            System.out.println("회원가입 실패");
+        }
+    }
 
     public void run(){
+        while(true){
+            System.out.println("================== 메인 화면 ======================");
+            System.out.println("[1] 로그인 , [2] 회원가입 [3] 종료");
+            System.out.println("==================================================");
+            int ch = scan.nextInt();
+            if(ch == 1) { mainMenu();}  // 로그인
+            else if( ch == 2 ) { mAdd(); } // 회원가입
+            else if( ch == 3 ) { break; } // 종료
+        }
+    }
+
+    public void mainMenu() {
         while(true){
             System.out.println("\n==================================================");
             System.out.println("               🩸혈액 관리 시스템🩸");
@@ -43,7 +80,6 @@ public class MainView {
         }
     }
 
-    // 혈액팩 메뉴
     public void bloodPackMenu(){
         bpc.bloodUpdate();
         while (true){
@@ -67,7 +103,6 @@ public class MainView {
             else{System.out.println("잘못된 번호입니다.");}
         }
     }
-
 
     // 혈액팩 등록
     public void bloodCreate(){
@@ -137,13 +172,13 @@ public class MainView {
          }
         for(BloodPackDto bloodpackdto : result){
             System.out.println("번호:" + bloodpackdto.getBlood_pack_id() + "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
-    }
+        }
         System.out.print("삭제할 혈액팩 번호를 입력해주세요 >");
         int blood_pack_id = scan.nextInt();
         boolean result1 = bpc.bloodDelete(blood_pack_id);
         if(result1)System.out.println("삭제 성공");
         else{System.out.println("삭제 실패");}
-}
+    }
 
 
     // 로그인/회원가입
@@ -152,7 +187,7 @@ public class MainView {
             System.out.println("\n==================================================");
             System.out.println("               🩸헌혈자 / 헌혈 이력 관리");
             System.out.println("==================================================");
-            System.out.println(" [1] 헌혈자 회원가입 ");
+            System.out.println(" [1] 헌혈자 회원가입");
             System.out.println(" [2] 헌혈자 로그인");
             System.out.println(" [3] 헌혈자 전체 조회");
             System.out.println(" [4] 헌혈자 개별 조회");
@@ -177,6 +212,7 @@ public class MainView {
     // [1] 헌혈자 회원가입
 
     // [2] 헌혈자 로그인
+    public
 
     // [3] 헌혈자 전체 조회
 
