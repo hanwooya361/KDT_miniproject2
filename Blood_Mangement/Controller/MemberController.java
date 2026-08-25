@@ -13,20 +13,26 @@ public class MemberController {
     private MemberDao med = MemberDao.getInstance();
 
     // 가입
-    public boolean mAdd(MemberDto memberDto){
-        boolean result = med.mAdd(memberDto);
-        return result;
+    public boolean mAdd(MemberDto memberDto) {
+    boolean check = med.logCheck(memberDto.getLogin_id());
+    // 가입실패
+    if (!check) { 
+        System.out.println("아이디가 이미 존재합니다.");
+        return false;
     }
-
+    return med.mAdd(memberDto);
+}
+    // 현재 로그인한 회원<<<<<<<현재 로그인한 회원 가져다 쓰기
+    private MemberDto loginMember = null;
 
     // 로그인
     public boolean mLogin(String login_id, String password){
         MemberDto memberDto = med.mLogin(login_id, password);
+        loginMember = memberDto;
         return memberDto != null;
     }
 
-    // 현재 로그인한 회원
-    private MemberDto loginMember = null;
+    
 
 
     // 전체조회

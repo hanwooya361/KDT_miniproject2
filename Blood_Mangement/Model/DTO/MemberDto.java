@@ -9,6 +9,7 @@ public class MemberDto {
     private String member_type;
     private String donation_date;
     
+    
 
     public MemberDto(){super();}
 
