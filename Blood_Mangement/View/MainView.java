@@ -490,7 +490,7 @@ public class MainView {
             System.out.print( "조회할 날짜 입력(예시: 2026-08-19) > " ); String shipment_date = scan.next();  
             ArrayList< MatchingDto > list = mc.shipmentView( shipment_date );
             System.out.println( "---------------------------------------" );
-            if( list == null ){ 
+            if( list.isEmpty() ){ 
                 System.out.println( "해당 날짜의 출고 내역이 존재하지 않습니다." );
             }else{
                 for( MatchingDto matchingDto : list ){
@@ -505,22 +505,20 @@ public class MainView {
             System.out.println( "---------------------------------------" );
         } // shipmentView end
 
-        // [API21] 매칭 성공이력 전체 조회 
+        // [API21] 매칭 성공이력 전체 조회  
         public void matchingView( ){
             System.out.println("[매칭 성공 이력 전체 조회]");
             ArrayList< MatchingDto > list = mc.matchingView(); 
             System.out.println( "---------------------------------------" );
-            if( list == null ){
+            if( list.isEmpty() ){
                 System.out.println("매칭 이력이 존재하지 않습니다.");
             }else{
                 for( MatchingDto matchingDto : list ){
                     System.out.println(
-                        "매칭번호: " + matchingDto.getMatching_detail_id() + 
-                        " | 회원번호: " + matchingDto.getMember_id() + 
-                        " | 혈액팩번호: " + matchingDto.getBlood_pack_id() + 
+                        "환자: " + matchingDto.getPatient_name( ) +
                         " | 병원: " + matchingDto.getHospital_name() + 
-                        " | 혈액형: " + matchingDto.getBlood_type() + 
-                        " | 출고일: " + matchingDto.getShipment_date() );
+                        " | 혈액형: " + matchingDto.getBlood_type( ) + 
+                        " | 출고일: " + matchingDto.getShipment_date( ) );
                 } // for end
             } // else end
             System.out.println( "---------------------------------------" );
