@@ -35,13 +35,14 @@ public class MainView {
             System.out.print("\n메뉴 선택 > ");
             int mmenu = scan.nextInt();
             if(mmenu==1){bloodPackMenu();}
-            else if(mmenu==2){}
+            else if(mmenu==2){memberMenu()}
             else if(mmenu==3){requestMenu();}
             else if(mmenu==4){matchingMenu();}
             else if(mmenu==5){break;}
             else{System.out.println("없는 메뉴입니다.");}
         }
     }
+
 
     public void bloodPackMenu(){
         bpc.bloodUpdate();
@@ -66,7 +67,6 @@ public class MainView {
             else{System.out.println("잘못된 번호입니다.");}
         }
     }
-
 
     // 혈액팩 등록
     public void bloodCreate(){
@@ -136,13 +136,13 @@ public class MainView {
          }
         for(BloodPackDto bloodpackdto : result){
             System.out.println("번호:" + bloodpackdto.getBlood_pack_id() + "혈액형:" + bloodpackdto.getBlood_type() + "/ 유통기한:" + bloodpackdto.getExpiration_date() + "/ 입고일:" + bloodpackdto.getReceived_date() + "/ 출고일:" + bloodpackdto.getShipment_date() + "/ 상태:" + bloodpackdto.getStatus());
-    }
+        }
         System.out.print("삭제할 혈액팩 번호를 입력해주세요 >");
         int blood_pack_id = scan.nextInt();
         boolean result1 = bpc.bloodDelete(blood_pack_id);
         if(result1)System.out.println("삭제 성공");
         else{System.out.println("삭제 실패");}
-}
+    }
 
     // ============= 수혈 요청 관리 ==============
     public void requestMenu(){

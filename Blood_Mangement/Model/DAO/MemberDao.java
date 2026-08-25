@@ -29,6 +29,12 @@ public class MemberDao extends BaseDao {
             System.out.println(e);
         } return false;
     }
+
+    // 로그인 함수
+    public boolean mLogin(MemberDto memberDto){
+        
+    }
+
     // 전체조회함수
     public ArrayList<MemberDto> mView(){
         ArrayList<MemberDto> mlist = new ArrayList<>();
