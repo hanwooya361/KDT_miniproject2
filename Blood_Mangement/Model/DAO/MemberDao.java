@@ -81,7 +81,7 @@ public class MemberDao extends BaseDao {
     public ArrayList<MemberDto> mView(){
         ArrayList<MemberDto> mlist = new ArrayList<>();
         try {
-            String sql = "select * from member m inner join donation_history dh on m.member_id_pk = dh.member_id_fk;"; // 2.1 SQL 작성한다.
+            String sql = "select * from member m inner join donation_history dh on m.member_id = dh.member_id;"; // 2.1 SQL 작성한다.
             PreparedStatement ps = conn.prepareStatement( sql );
             ResultSet rs =  ps.executeQuery();
             
@@ -103,7 +103,7 @@ public class MemberDao extends BaseDao {
     public MemberDto minView(){
         MemberDto minlist = new MemberDto();
         try {
-            String sql = "select login_id, name, phone, Member_type, donation_date from member m inner join donation_history dh on m.member_id_pk = dh.member_id_fk where login_id = ?;";
+            String sql = "select login_id, name, phone, Member_type, donation_date from member m inner join donation_history dh on m.member_id = dh.member_id where login_id = ?;";
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setString(1, minlist.getLogin_id());
             ResultSet rs =  ps.executeQuery();
