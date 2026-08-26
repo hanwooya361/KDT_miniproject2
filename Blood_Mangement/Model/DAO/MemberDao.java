@@ -62,8 +62,12 @@ public class MemberDao extends BaseDao {
             // 결과 확인 (조회된 행이 1개라도 있으면 로그인 성공)
             if (rs.next()) {
                 MemberDto memberDto = new MemberDto();
+                memberDto.setMember_id(rs.getInt("member_id"));
                 memberDto.setLogin_id(rs.getString("login_id"));
                 memberDto.setPassword(rs.getString("password"));
+                memberDto.setName(rs.getString("name"));
+                memberDto.setPhone(rs.getString("phone"));
+                memberDto.setMember_type(rs.getString("member_type"));
                 return memberDto;
             }
         } catch (Exception e) {

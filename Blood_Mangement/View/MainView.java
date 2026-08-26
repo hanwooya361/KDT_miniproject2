@@ -235,16 +235,19 @@ public class MainView {
         String login_id = scan.next();
         System.out.println("비밀번호를 입력하세요");
         String password = scan.next();
+        if (mec.mLogin(login_id, password)) {
 
-        if(mec.mLogin(login_id, password)){
-            System.out.println("로그인 성공");
-            
-        }else{
-            System.out.println("로그인 실패");
-            run(loginMember);
-        }
+        // ★ Controller에 저장된 로그인 회원을 가져온다
+        loginMember = mec.getLoginMember();
+        System.out.println("로그인 성공");
+        System.out.println("회원번호 : " + loginMember.getMember_id());
+        System.out.println("회원이름 : " + loginMember.getName());
         mainMenu();
+    } else {
+        System.out.println("로그인 실패");
+        return;
     }
+}
 
     // [3] 헌혈자 전체 조회
     public void mView(){
