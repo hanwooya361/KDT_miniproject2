@@ -46,37 +46,25 @@ public class MatchingDao extends BaseDao {
 
             // [API18] 수혈 요청 매칭 및 출고 등록 shipmentCreate( )
             public boolean shipmentCreate( int request_id , int blood_pack_id ){
-                int member_id = 0;
                 try{
-                    // 1. 수혈 요청 정보에서 requester_id 조회
-                    String sql1 = "select requester_id from transfusion_request where request_id = ?";
+                    // 2. matching 테이블에 request_id를 저장
+                    String sql1 = "insert into matching(blood_pack_id, request_id) values(?, ?)";
                     PreparedStatement ps1 = conn.prepareStatement(sql1);
-                    ps1.setInt(1, request_id);
-                    ResultSet rs1 = ps1.executeQuery();
-                    if(rs1.next()){
-                    member_id = rs1.getInt("requester_id");
-                    }else{
-                        return false;
-                    }
-
-                    // 2. matching 테이블에 등록 (insert)
-                    String sql2 = "insert into matching(member_id, blood_pack_id) values(?, ?)";
+                    ps1.setInt(1, blood_pack_id);
+                    ps1.setInt(2, request_id);
+                    ps1.executeUpdate();
+                    
+                    // 3. blood_pack 상태 출고완료 및 출고일 변경 (update)
+                    String sql2 = "update blood_pack set status = '출고완료' , shipment_date = now() where blood_pack_id = ?";
                     PreparedStatement ps2 = conn.prepareStatement(sql2);
-                    ps2.setInt(1, member_id);
-                    ps2.setInt(2, blood_pack_id);
+                    ps2.setInt(1, blood_pack_id );
                     ps2.executeUpdate();
 
-                    // 3. blood_pack 상태 출고완료 및 출고일 변경 (update)
-                    String sql3 = " update blood_pack set status = '출고완료' , shipment_date = now() where blood_pack_id = ? ";
-                    PreparedStatement ps3 = conn.prepareStatement(sql3);
-                    ps3.setInt(1, blood_pack_id );
-                    ps3.executeUpdate();
-
                     // 4. transfusion_request 상태 '완료' 변경 (update)
-                    String sql4 = " update transfusion_request set status = '완료' where request_id = ? ";
-                    PreparedStatement ps4 = conn.prepareStatement(sql4);
-                    ps4.setInt(1, request_id);
-                    ps4.executeUpdate();
+                    String sql3 = " update transfusion_request set status = '완료' where request_id = ? ";
+                    PreparedStatement ps3 = conn.prepareStatement(sql3);
+                    ps3.setInt(1, request_id);
+                    ps3.executeUpdate();
 
                     return true; // 2/3/4 문제 없으면 성공 반환
                 } catch ( Exception e ){ System.out.println( e ); }  
@@ -87,54 +75,53 @@ public class MatchingDao extends BaseDao {
 
             // [API20] 병원 출고 내역 조회
             public ArrayList<MatchingDto> shipmentView(String shipment_date) {
-                ArrayList<MatchingDto> list = new ArrayList<>();
-                try {
-                    // 수정됨: GROUP BY와 max()를 제거하고 JOIN 조건을 완벽하게 세팅
-                    String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
-                            + "tr.hospital_name, tr.patient_name, "
-                            + "bp.blood_type, bp.shipment_date, bp.status "
-                            + "from matching m "
-                            + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
-                            + "join transfusion_request tr on m.member_id = tr.requester_id "
-                            + "and bp.blood_type = tr.blood_type "  // 혈액형까지 일치하는 환자 매칭
-                            + "and tr.status = '완료' "
-                            + "where bp.shipment_date like concat(?, '%') and bp.status = '출고완료' ";
+            ArrayList<MatchingDto> list = new ArrayList<>();
+            try {
+                String sql = "select m.matching_detail_id, tr.requester_id as member_id, m.blood_pack_id, "
+                        + "tr.hospital_name, tr.patient_name, "
+                        + "bp.blood_type, bp.shipment_date, bp.status "
+                        + "from matching m "
+                        + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
+                        + "join transfusion_request tr on m.request_id = tr.request_id "
+                        + "where bp.shipment_date like concat(?, '%') and bp.status = '출고완료' "
+                        + "order by bp.shipment_date desc";
 
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, shipment_date);
+                ResultSet rs = ps.executeQuery();
 
-                    PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setString(1, shipment_date);
-                    ResultSet rs = ps.executeQuery();
-
-                    while (rs.next()) {
-                        MatchingDto matchingDto = new MatchingDto();
-                        matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
-                        matchingDto.setMember_id(rs.getInt("member_id"));
-                        matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
-                        matchingDto.setHospital_name(rs.getString("hospital_name"));
-                        matchingDto.setPatient_name(rs.getString("patient_name"));
-                        matchingDto.setBlood_type(rs.getString("blood_type"));
-                        matchingDto.setShipment_date(rs.getString("shipment_date"));
-                        matchingDto.setStatus(rs.getString("status"));
-                        list.add(matchingDto);
-                    }
-                } catch( Exception e ) { System.out.println( e ); }
+                while (rs.next()) {
+                    MatchingDto matchingDto = new MatchingDto();
+                    matchingDto.setMatching_detail_id(rs.getInt("matching_detail_id"));
+                    matchingDto.setMember_id(rs.getInt("member_id"));
+                    matchingDto.setBlood_pack_id(rs.getInt("blood_pack_id"));
+                    matchingDto.setHospital_name(rs.getString("hospital_name"));
+                    matchingDto.setPatient_name(rs.getString("patient_name"));
+                    matchingDto.setBlood_type(rs.getString("blood_type"));
+                    matchingDto.setShipment_date(rs.getString("shipment_date"));
+                    matchingDto.setStatus(rs.getString("status"));
+                    list.add(matchingDto);
+                }
+                } catch( Exception e ) { 
+                    System.out.println("출고 내역 조회 오류: " + e); 
+                }
                 return list;
             }
 
+            
             // [API21] 매칭 성공 이력 전체 조회
             public ArrayList<MatchingDto> matchingView() {
                 ArrayList<MatchingDto> list = new ArrayList<>();
                 try {
-                    String sql = "select m.matching_detail_id, m.member_id, m.blood_pack_id, "
+                    // request_id 기준 JOIN
+                    String sql = "select m.matching_detail_id, tr.requester_id as member_id, m.blood_pack_id, "
                             + "tr.hospital_name, tr.patient_name, "
                             + "bp.blood_type, bp.shipment_date, bp.status "
                             + "from matching m "
                             + "join blood_pack bp on m.blood_pack_id = bp.blood_pack_id "
-                            + "join transfusion_request tr on m.member_id = tr.requester_id "
-                            + "    and bp.blood_type = tr.blood_type "
-                            + "    and tr.status = '완료' "
-                            + "where bp.status = '출고완료' ";
-
+                            + "join transfusion_request tr on m.request_id = tr.request_id "
+                            + "where bp.status = '출고완료' "
+                            + "order by m.matching_detail_id desc";
 
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ResultSet rs = ps.executeQuery();
@@ -151,7 +138,9 @@ public class MatchingDao extends BaseDao {
                         matchingDto.setStatus(rs.getString("status"));
                         list.add(matchingDto);
                     }
-                } catch ( Exception e ) { System.out.println( e ); }
+                } catch ( Exception e ) { 
+                    System.out.println( e ); 
+                }
                 return list;
             }
 
@@ -178,11 +167,14 @@ public class MatchingDao extends BaseDao {
                 int count = ps1.executeUpdate();
                 if( count >= 1 ){
                     return true; }
-                }catch( Exception e ){ System.out.println( e );         
+                }catch( Exception e ){ System.out.println( e ); 
                 }return false;
+            
 
             } // shipmentDelete end
 
 } // class end
+
+
 
 
