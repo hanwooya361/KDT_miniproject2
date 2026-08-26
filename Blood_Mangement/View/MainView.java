@@ -482,12 +482,18 @@ public class MainView {
         else { System.out.println("삭제 실패");}
     }
 
-
+    public boolean checkAdmin() {
+        return mc.checkAdmin();
+    }
     
 
     // ==================== 혈액 출고 및 매칭 관리 ====================
     public void matchingMenu( ){
         while( true ){
+            if ( !checkAdmin() ) { 
+                System.out.println("관리자가 아닙니다.");
+                break; 
+            }
             System.out.println( "==========================" );
             System.out.println( "  혈액 출고 및 매칭 관리   " );
             System.out.println( "==========================" );
