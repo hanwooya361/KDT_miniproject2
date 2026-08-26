@@ -263,6 +263,7 @@ public class MainView {
     public void minView(){
         MemberDto minlist = mec.minView();
         System.out.println("========== 회원 목록 ===========");
+        System.out.println("조회할 아이디: ");
         if (minlist == null) {
             System.out.println("목록이 존재하지 않습니다.");
             return;
