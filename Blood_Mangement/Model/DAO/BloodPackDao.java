@@ -84,13 +84,9 @@ public class BloodPackDao extends BaseDao{
                   "(member_id, donation_date, created_at) " +
                   "VALUES (?, CURDATE(), CURDATE())";
 
-              try (PreparedStatement ps = conn.prepareStatement(
-                      insertDonationSql,
-                      Statement.RETURN_GENERATED_KEYS)) {
-
+              try (PreparedStatement ps = conn.prepareStatement(insertDonationSql,Statement.RETURN_GENERATED_KEYS)) {
                   ps.setInt(1, memberId);
                   ps.executeUpdate();
-
                   try (ResultSet rs = ps.getGeneratedKeys()) {
                       if (rs.next()) {
                           donationId = rs.getInt(1);
