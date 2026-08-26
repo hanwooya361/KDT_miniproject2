@@ -37,7 +37,6 @@ public class BloodPackDao extends BaseDao{
 
               try (ResultSet rs = ps.executeQuery()) {
                   if (rs.next()) {
-                      conn.rollback();
                       return 0;
                   }
               }
