@@ -539,14 +539,41 @@ public void ddelete() {
     } // matchingMenu end
 
         // [API18 , API19] 수혈 매칭 및 출고 등록
-        public void shipmentCreate( ){
-            System.out.println( "[수혈 매칭 및 출고 등록]" );
-            System.out.print( "수혈 요청 번호 > "); int request_id = scan.nextInt();
-            System.out.print( "혈액팩 번호 > " ); int blood_pack_id = scan.nextInt();
-            boolean result = mc.shipmentCreate( request_id , blood_pack_id );
-            if(result){ System.out.println( "[성공] 수혈 매칭 및 출고 처리가 완료되었습니다" );
-            }else{ System.out.println( "[실패] 출고 불가능 (상태 확인 필요)" ); }
-        
+        public void shipmentCreate(){
+            System.out.println("[수혈 매칭 및 출고 등록]");
+
+            System.out.println("-- [1] 수혈 요청 목록 --");
+            rWaitListCheck();
+
+            System.out.println("-- [2] 보관 중인 혈액팩 목록 --");
+            ArrayList<BloodPackDto> bloodList = bpc.bloodAllPirnt();
+            if( bloodList != null ){
+                for( BloodPackDto bp : bloodList ){
+                    if( "보관중".equals( bp.getStatus() ) ){
+                        System.out.println(
+                            "혈액팩 번호: " + bp.getBlood_pack_id() +
+                            " | 혈액형: " + bp.getBlood_type() +
+                            " | 입고일: " + bp.getReceived_date() +
+                            " | 유통기한: " + bp.getExpiration_date() +
+                            " | 상태: " + bp.getStatus()
+                        );
+                    }
+                }
+            }
+            System.out.println("--------------------------------------------------");
+
+            System.out.print("수혈 요청 번호 > "); 
+            int request_id = scan.nextInt();
+            System.out.print("혈액팩 번호 > "); 
+            int blood_pack_id = scan.nextInt();
+
+            boolean result = mc.shipmentCreate(request_id, blood_pack_id);
+
+            if(result){ 
+                System.out.println("[성공] 수혈 매칭 및 출고 처리가 완료되었습니다.");
+            } else { 
+                System.out.println("[실패] 출고 불가능 (상태 확인 필요)"); 
+            }
         } // shipmentCreate end
 
         // [API20] 병원 출고 내역 조회
@@ -580,7 +607,9 @@ public void ddelete() {
             }else{
                 for( MatchingDto matchingDto : list ){
                     System.out.println(
-                        "환자: " + matchingDto.getPatient_name( ) +
+                        "매칭번호: " + matchingDto.getMatching_detail_id() +
+                        " | 혈액팩번호: " + matchingDto.getBlood_pack_id() +
+                        " | 환자: " + matchingDto.getPatient_name() +
                         " | 병원: " + matchingDto.getHospital_name() + 
                         " | 혈액형: " + matchingDto.getBlood_type( ) + 
                         " | 출고일: " + matchingDto.getShipment_date( ) );
@@ -592,8 +621,39 @@ public void ddelete() {
         // [API22] 매칭 혈액팩 변경 수정
         public void shipmentUpdate( ){
             System.out.println( "[매칭 혈액팩 수정]" );
-            System.out.print( "수정할 매칭 상세 번호 > " ); int matching_detail_id = scan.nextInt();
-            System.out.print( "새로 연결할 혈액팩 번호 > "); int blood_pack_id = scan.nextInt();
+
+            System.out.println("현재 매칭 목록을 조회합니다.");
+            matchingView();
+
+            System.out.println("교체 가능한 보관중 혈액팩 목록");
+            ArrayList<BloodPackDto> bloodList = bpc.bloodAllPirnt();
+            boolean bStock = false;
+
+            if( bloodList != null ){
+                for( BloodPackDto bp : bloodList ){
+                    if( "보관중".equals( bp.getStatus() ) ){
+                        System.out.println(
+                            "혈액팩 번호: " + bp.getBlood_pack_id() +
+                            " | 혈액형: " + bp.getBlood_type() +
+                            " | 입고일: " + bp.getReceived_date() +
+                            " | 유통기한: " + bp.getExpiration_date() +
+                            " | 상태: " + bp.getStatus()
+                        );
+                        bStock = true;
+                    }
+                }
+            }
+            
+            if( !bStock ){
+                System.out.println(">> 현재 보관 중인 혈액팩이 없습니다.");
+            }
+
+            System.out.println("---------------------------------------");
+            System.out.print( "수정할 매칭 상세 번호 > " ); 
+            int matching_detail_id = scan.nextInt();
+            
+            System.out.print( "새로 연결할 혈액팩 번호 > " ); 
+            int blood_pack_id = scan.nextInt();
 
             MatchingDto matchingDto = new MatchingDto();
             matchingDto.setMatching_detail_id(matching_detail_id);
@@ -603,14 +663,21 @@ public void ddelete() {
 
             if( result ){
                 System.out.println( "[성공] 매칭 정보 수정 완료" );
-            }else{ System.out.println( "[실패] 매칭 정보 수정 실패(번호 확인 필요)" ); }
-        
+            } else { 
+                System.out.println( "[실패] 매칭 정보 수정 실패(번호 확인 필요)" ); 
+            }
+
         } // shipmentUpdate end
 
-        // [API23] 출고 취소 (논리적 삭제)
+        // [API23] 출고 취소 (논리적 삭제 및 보관 복구)
         public void shipmentDelete( ){
             System.out.println( "[출고 취소 및 보관 복구]" );
-            System.out.print( " 출고 취소할 혈액팩 번호 > " ); int blood_pack_id = scan.nextInt();
+            
+            System.out.println(">> [현재 출고완료된 매칭 목록]");
+            matchingView();
+
+            System.out.print( "출고 취소할 혈액팩 번호 > " ); 
+            int blood_pack_id = scan.nextInt();
 
             MatchingDto matchingDto = new MatchingDto();
             matchingDto.setBlood_pack_id(blood_pack_id);
@@ -618,9 +685,10 @@ public void ddelete() {
             boolean result = mc.shipmentDelete(matchingDto);
 
             if( result ){
-                System.out.println( "[성공] 출고가 취소되었으며, 혈액팩이 보관중으로 복구되었습니다." );
-            }else{ System.out.println( "[실패] 출고 취소 실패(번호 확인 필요)");}
-
+                System.out.println( ">> [성공] 출고가 취소되었으며, 혈액팩이 보관중으로 복구되었습니다." );
+            } else { 
+                System.out.println( ">> [실패] 출고 취소 실패 (일치하는 출고완료 매칭 정보가 없습니다.)" );
+            }
         } // shipmentDelete end
 
 } // MainView end
