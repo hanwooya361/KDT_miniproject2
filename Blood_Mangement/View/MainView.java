@@ -41,6 +41,10 @@ public class MainView {
             else if( ch == 3 ) { break; } // 종료
         }
     }
+    
+
+
+
 
     public void mainMenu() {
         while(true){
