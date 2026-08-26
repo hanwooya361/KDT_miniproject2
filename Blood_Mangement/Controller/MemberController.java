@@ -48,14 +48,14 @@ public class MemberController {
     }
 
     // 개별조회
-    public MemberDto minView(){
-        MemberDto result = med.minView();
+    public MemberDto minView(String login_id){
+        MemberDto result = med.minView(login_id);
         return result;
+
     }
 
     // 회원정보수정
     public boolean mUpdate(String oldLoginid, int ch, String value) {
-        // 1. 수정할 정보를 담을 DTO 객체 생성
         MemberDto memberDto = new MemberDto();
 
         if (ch == 1) {
@@ -72,7 +72,6 @@ public class MemberController {
             return false; 
         }
 
-        // 3. DTO와 선택번호, 기존아이디를 DAO로 전달
         return med.mUpdate(memberDto, ch, oldLoginid);
     }
 

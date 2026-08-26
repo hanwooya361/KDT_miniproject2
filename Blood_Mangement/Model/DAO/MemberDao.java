@@ -81,7 +81,8 @@ public class MemberDao extends BaseDao {
     public ArrayList<MemberDto> mView(){
         ArrayList<MemberDto> mlist = new ArrayList<>();
         try {
-            String sql = "select * from member m inner join donation_history dh on m.member_id = dh.member_id;"; // 2.1 SQL 작성한다.
+            String sql = "SELECT m.login_id, m.name, m.phone, m.member_type, dh.donation_date " +
+                     "FROM member m LEFT JOIN donation_history dh ON m.member_id = dh.member_id"; // 2.1 SQL 작성한다.
             PreparedStatement ps = conn.prepareStatement( sql );
             ResultSet rs =  ps.executeQuery();
             
@@ -99,28 +100,31 @@ public class MemberDao extends BaseDao {
         } return mlist;
     }
 
-    // 개별조회함수
-    public MemberDto minView(){
-        MemberDto minlist = new MemberDto();
+    // 매개변수로 조회할 login_id를 직접 입력받기
+    public MemberDto minView(String login_id) {
+        MemberDto memberDto = null; // 초기값을 null로 설정 (조회 결과 없을 때 구분용
         try {
-            String sql = "select login_id, name, phone, Member_type, donation_date from member m inner join donation_history dh on m.member_id = dh.member_id where login_id = ?;";
-            PreparedStatement ps = conn.prepareStatement( sql );
-            ps.setString(1, minlist.getLogin_id());
-            ResultSet rs =  ps.executeQuery();
+            String sql = "SELECT m.login_id, m.name, m.phone, m.member_type, dh.donation_date " +
+                     "FROM member m LEFT JOIN donation_history dh ON m.member_id = dh.member_id " +
+                     "WHERE m.login_id = ?";
+                        
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, login_id); // 입력받은 login_id 바인딩
+            ResultSet rs = ps.executeQuery();
             
-            while (rs.next() ) {
-                MemberDto memberDto = new MemberDto();
+            // 개별 조회의 결과는 1건이므로 while 대신 if 사용
+            if (rs.next()) {
+                memberDto = new MemberDto();
                 memberDto.setLogin_id(rs.getString("login_id"));
                 memberDto.setName(rs.getString("name"));
                 memberDto.setPhone(rs.getString("phone"));
-                memberDto.setMember_type(rs.getString("member_type"));
+                memberDto.setMember_type(rs.getString("Member_type"));
                 memberDto.setDonation_date(rs.getString("donation_date"));
-                minlist = memberDto;    ///////////????????
             }
         } catch (Exception e) {
-            System.out.println(e);
-        } return minlist;
-    }
+            System.out.println("개별 조회 오류: " + e.getMessage());
+        } return memberDto; // 조회 결과가 없으면 null 반환
+}
 
     // 회원정보수정
     public boolean mUpdate(MemberDto memberDto, int ch, String oldLoginid) {
@@ -134,7 +138,6 @@ public class MemberDao extends BaseDao {
 
     try {
         PreparedStatement ps = conn.prepareStatement(sql);
-        
         // 선택 항목만
         if (ch == 1) ps.setString(1, memberDto.getLogin_id());
         else if (ch == 2) ps.setString(1, memberDto.getPassword());

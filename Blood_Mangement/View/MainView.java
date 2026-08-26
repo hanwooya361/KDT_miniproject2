@@ -265,9 +265,10 @@ public class MainView {
     }
     // [4] 헌혈자 개별 조회
     public void minView(){
-        MemberDto minlist = mec.minView();
+        System.out.print("조회할 아이디: ");
+        String login_id = scan.next();
+        MemberDto minlist = mec.minView(login_id);
         System.out.println("========== 회원 목록 ===========");
-        System.out.println("조회할 아이디: ");
         if (minlist == null) {
             System.out.println("목록이 존재하지 않습니다.");
             return;
