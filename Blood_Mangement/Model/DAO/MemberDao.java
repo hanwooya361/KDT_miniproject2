@@ -124,98 +124,119 @@ public class MemberDao extends BaseDao {
         } catch (Exception e) {
             System.out.println("개별 조회 오류: " + e.getMessage());
         } return memberDto; // 조회 결과가 없으면 null 반환
-}
+    }
 
     // 회원정보수정
     public boolean mUpdate(MemberDto memberDto, int ch, String oldLoginid) {
-    String sql = "";
-    if (ch == 1) sql = "UPDATE member SET login_id = ? WHERE login_id = ?";
-    else if (ch == 2) sql = "UPDATE member SET password = ? WHERE login_id = ?";
-    else if (ch == 3) sql = "UPDATE member SET name = ? WHERE login_id = ?";
-    else if (ch == 4) sql = "UPDATE member SET phone = ? WHERE login_id = ?";
-    else if (ch == 5) sql = "UPDATE member SET member_type = ? WHERE login_id = ?";
-    else return false;
+        String sql = "";
+        if (ch == 1) sql = "UPDATE member SET login_id = ? WHERE login_id = ?";
+        else if (ch == 2) sql = "UPDATE member SET password = ? WHERE login_id = ?";
+        else if (ch == 3) sql = "UPDATE member SET name = ? WHERE login_id = ?";
+        else if (ch == 4) sql = "UPDATE member SET phone = ? WHERE login_id = ?";
+        else if (ch == 5) sql = "UPDATE member SET member_type = ? WHERE login_id = ?";
+        else return false;
 
-    try {
-        PreparedStatement ps = conn.prepareStatement(sql);
-        // 선택 항목만
-        if (ch == 1) ps.setString(1, memberDto.getLogin_id());
-        else if (ch == 2) ps.setString(1, memberDto.getPassword());
-        else if (ch == 3) ps.setString(1, memberDto.getName());
-        else if (ch == 4) ps.setString(1, memberDto.getPhone());
-        else if (ch == 5) ps.setString(1, memberDto.getMember_type());
-        
-        ps.setString(2, oldLoginid);
-        return ps.executeUpdate() == 1;
-    } catch (SQLException e) {
-        System.out.println(e);
-    }
-    return false;
-}
-
-    // 헌혈이력정보수정
-    public boolean dUpdate(MemberDto memberDto){
         try {
-            String sql = "update donation_history set donation_date = ? where login_id = ?";
-            PreparedStatement ps = conn.prepareStatement( sql );
-            ps.setString(1, memberDto.getDonation_date());
-            ps.setString(2, memberDto.getLogin_id());
-            int result = ps.executeUpdate();
-            if (result == 1) {return true;}
-        } catch (SQLException e) {
-            System.out.println(e);
-        }return false;
-    }
-    // 헌혈이력정보만삭제
-    public boolean ddelete( String login_id ){
-        try{ String sql = "delete from donation_history where login_id = ?";
-            PreparedStatement ps = conn.prepareStatement( sql );
-            ps.setString( 1 , login_id ); // SQL 문법내 첫번째 ? 에 매개변수 값 대입 
-            int result = ps.executeUpdate();
-            if( result == 1 ) return true;
-        }catch( SQLException e ){ System.out.println( e ); }
-        return false;
-    }
-
-
-    // 회원정보삭제(탈퇴)
-    public boolean mdelete( String login_id, String password ){
-        try{
-            String checkSql = "SELECT password FROM member WHERE login_id = ?";
-            PreparedStatement checkPs = conn.prepareStatement(checkSql);
-            checkPs.setString(1, login_id);
-            ResultSet rs = checkPs.executeQuery();
-
-            if (rs.next()) {
-                String dbPassword = rs.getString("password");
-                // 입력한 비밀번호와 DB 비밀번호가 다르면 삭제X
-                if (!dbPassword.equals(password)) {
-                    return false; 
-                }
-            } else {
-                return false; // 존재하지 않는 아이디
-            }
-
-            // 비밀번호 일치 시 자식 테이블 삭제
-            String sql1 = "DELETE FROM donation_history WHERE login_id = ?";
-            PreparedStatement ps1 = conn.prepareStatement(sql1);
-            ps1.setString(1, login_id);
-            ps1.executeUpdate();
-
-            // 부모 테이블 삭제
-            String sql2 = "DELETE FROM member WHERE login_id = ?";
-            PreparedStatement ps2 = conn.prepareStatement(sql2);
-            ps2.setString(1, login_id);
-
-            return ps2.executeUpdate() == 1;
-
+            PreparedStatement ps = conn.prepareStatement(sql);
+            // 선택 항목만
+            if (ch == 1) ps.setString(1, memberDto.getLogin_id());
+            else if (ch == 2) ps.setString(1, memberDto.getPassword());
+            else if (ch == 3) ps.setString(1, memberDto.getName());
+            else if (ch == 4) ps.setString(1, memberDto.getPhone());
+            else if (ch == 5) ps.setString(1, memberDto.getMember_type());
+            
+            ps.setString(2, oldLoginid);
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.out.println(e);
         }
         return false;
     }
 
-    
+    // 헌혈 이력 정보 수정
+    public boolean dUpdate(MemberDto memberDto) {
+        try {
+            // donation_history에 login_id가 없고 member_id만 FK로 연결되어 있는 경우 서브쿼리 활용
+            String sql = "UPDATE donation_history dh " +
+                        "JOIN member m ON dh.member_id = m.member_id " +
+                        "SET dh.donation_date = ? WHERE m.login_id = ?";       
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, memberDto.getDonation_date());
+            ps.setString(2, memberDto.getLogin_id());
+            
+            int result = ps.executeUpdate();
+            ps.close(); // 자원 해제
+            if (result >= 1) return true;
+        } catch (SQLException e) {
+            System.out.println("헌혈 이력 수정 오류: " + e.getMessage());
+        }
+        return false;
+    }
 
+    // 헌혈 이력 정보만 삭제
+    public boolean ddelete(String login_id) {
+        try {
+            String sql = "DELETE dh FROM donation_history dh " +
+                        "JOIN member m ON dh.member_id = m.member_id " +
+                        "WHERE m.login_id = ?"; 
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, login_id);
+            
+            int result = ps.executeUpdate();
+            ps.close(); 
+            if (result >= 1) return true;
+        } catch (SQLException e) {
+            System.out.println("헌혈 이력 삭제 오류: " + e.getMessage());
+        }
+        return false;
+    }
+
+
+        // 회원정보삭제(탈퇴)
+    public boolean mdelete(String login_id, String password) {
+        PreparedStatement checkPs = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            // 비밀번호 검증
+            String checkSql = "SELECT password FROM member WHERE login_id = ?";
+            checkPs = conn.prepareStatement(checkSql);
+            checkPs.setString(1, login_id);
+            rs = checkPs.executeQuery();
+
+            if (rs.next()) {
+                String dbPassword = rs.getString("password");
+                if (!dbPassword.equals(password)) {
+                    return false;
+                }
+            } else {
+                return false; // 존재하지 않는 회원
+            }
+
+            String sql = "DELETE dh, m FROM member m " +
+                        "LEFT JOIN donation_history dh ON m.member_id = dh.member_id " +
+                        "WHERE m.login_id = ?";
+                        
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, login_id);
+
+            int result = ps.executeUpdate();
+            // m(member)은 1건 삭제되고, dh(donation_history)는 0건 이상 삭제되므로
+            // result(총 삭제된 행 수)가 1 이상이면 회원 탈퇴 성공
+            return result >= 1;
+
+        } catch (SQLException e) {
+            System.out.println("회원 탈퇴 처리 중 오류: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (checkPs != null) checkPs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                System.out.println("자원 해제 오류: " + e.getMessage());
+            }
+        }
+        return false;
+    }
     
 }//ce
