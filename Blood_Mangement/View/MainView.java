@@ -198,7 +198,7 @@ public class MainView {
             if(bmenu == 1){mView();}
             else if(bmenu == 2){minView();}
             else if(bmenu == 3){mUpdate();}
-            else if(bmenu == 4){dUpdate();}
+            else if(bmenu == 4){donationMenu();}
             else if(bmenu == 5){mdelete();}
             else if(bmenu == 6){break;}
             else{System.out.println("잘못된 번호입니다.");}
@@ -288,7 +288,7 @@ public class MainView {
             System.out.println("수정 실패 (아이디를 찾을 수 없거나 올바르지 않은 번호입니다.)");
         }
     }
-    // [6] 헌혈 이력 정보 수정/삭제
+    // [6] 헌혈이력 수정/삭제
     
     public void donationMenu() {
         System.out.println("\n========== 헌혈 이력 관리 ===========");
@@ -304,47 +304,70 @@ public class MainView {
             System.out.println("잘못된 입력입니다.");
         }
     }
-    public void dUpdate(){
-        System.out.println("========== 헌혈 이력 수정 ===========");
-        System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력: ");
-        String login_id = scan.next();
-        
-        System.out.print("수정할 새로운 헌혈 날짜 입력 (예: 2026-08-25): ");
-        String donation_date = scan.next();
+    public void dUpdate() {
+    System.out.println("\n========== 헌혈 이력 수정 ===========");
+    System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력: ");
+    String login_id = scan.next();
 
-        MemberDto memberDto = new MemberDto();
-        memberDto.setLogin_id(login_id);
-        memberDto.setDonation_date(donation_date);
-        boolean result = mec.dUpdate(memberDto);
+    // 1. 사전 검증: 기존 회원 및 헌혈 이력 정보 조회
+    MemberDto checkMember = mec.minView(login_id);
 
-        if (result) {
-            System.out.println(">> 헌혈 이력 수정 성공");
-        } else {
-            System.out.println(">> 헌혈 이력 수정 실패 (아이디를 찾을 수 없거나 DB 오류)");
-        }
-    } 
-
-    public void ddelete(){
-        System.out.println("\n========== 헌혈 이력 삭제 ===========");
-        System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력: ");
-        String login_id = scan.next();
-
-        System.out.print("정말로 삭제하시겠습니까? (1:예 / 2:아니오): ");
-        int confirm = scan.nextInt();
-
-        if (confirm == 1) {
-            // Controller의 ddelete 호출
-            boolean result = mec.ddelete(login_id);
-
-            if (result) {
-                System.out.println(">> 헌혈 이력이 성공적으로 삭제되었습니다.");
-            } else {
-                System.out.println(">> 삭제 실패 (삭제할 이력이 없거나 아이디 오류)");
-            }
-        } else {
-            System.out.println(">> 삭제가 취소되었습니다.");
-        }
+    if (checkMember == null) {
+        System.out.println(">> 존재하지 않는 회원 아이디입니다.");
+        return;
     }
+
+    // 헌혈 이력(donation_date)이 null인 경우 수정 불가 처리
+    if (checkMember.getDonation_date() == null) {
+        System.out.println(">> 해당 회원은 등록된 헌혈 이력이 없습니다. (수정 불가)");
+        return;
+    }
+
+    // 2. 이력이 존재할 때만 새로운 날짜 입력받기
+    System.out.print("수정할 새로운 헌혈 날짜 입력 (예: 2026-08-25): ");
+    String donation_date = scan.next();
+
+    MemberDto memberDto = new MemberDto();
+    memberDto.setLogin_id(login_id);
+    memberDto.setDonation_date(donation_date);
+
+    // 3. Controller 호출
+    if (mec.dUpdate(memberDto)) {
+        System.out.println(">> 헌혈 이력 수정 성공!");
+    } else {
+        System.out.println(">> 헌혈 이력 수정 실패");
+    }
+}
+
+// [6-2] 헌혈 이력 삭제 View
+public void ddelete() {
+    System.out.println("\n========== 헌혈 이력 삭제 ===========");
+    System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력: ");
+    String login_id = scan.next();
+
+    // 1. 사전 검증
+    MemberDto checkMember = mec.minView(login_id);
+    if (checkMember == null) {
+        System.out.println(">> 존재하지 않는 회원 아이디입니다.");
+        return;
+    }
+    if (checkMember.getDonation_date() == null) {
+        System.out.println(">> 해당 회원은 삭제할 헌혈 이력이 없습니다.");
+        return;
+    }
+    // 2. 이력이 존재할 때만 삭제 진행
+    System.out.print("정말로 헌혈 이력을 삭제하시겠습니까? (1:예 / 2:아니오): ");
+    int confirm = scan.nextInt();
+    if (confirm == 1) {
+        if (mec.ddelete(login_id)) {
+            System.out.println(">> 헌혈 이력 삭제 완료");
+        } else {
+            System.out.println(">> 헌혈 이력 삭제 실패");
+        }
+    } else {
+        System.out.println(">> 삭제가 취소되었습니다.");
+    }
+}
     
     // [7] 회원 탈퇴
     public void mdelete(){
