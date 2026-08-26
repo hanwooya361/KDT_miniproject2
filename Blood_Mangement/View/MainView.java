@@ -491,7 +491,7 @@ public class MainView {
     public void matchingMenu( ){
         while( true ){
             if ( !checkAdmin() ) { 
-                System.out.println("관리자가 아닙니다.");
+                System.out.println("[접근실패] 관리자 권한이 없습니다.");
                 break; 
             }
             System.out.println( "==========================" );
