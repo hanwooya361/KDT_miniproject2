@@ -30,12 +30,18 @@ public class RequestController {
         return rList;
     }
 
-    // [4] 헌혈 요청 목록 수정
+    // [4] 본인의 요청 목록 조회
+    public ArrayList<RequestDto> rMyListCheck() {
+        ArrayList<RequestDto> rList = rd.rMyListcheck();
+        return rList;
+    }
+
+    // [5] 헌혈 요청 목록 수정
     public boolean rListUpdate(int request_id, int ch, String value){
         return rd.rListUpdate(request_id, ch, value);
     }
 
-    // [5] 헌혈 요청 목록 삭제
+    // [6] 헌혈 요청 목록 삭제
     public boolean rListDelete (int request_id) {
         return rd.rListDelete(request_id);
     }

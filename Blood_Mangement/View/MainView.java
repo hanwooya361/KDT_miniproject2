@@ -369,17 +369,19 @@ public class MainView {
             System.out.println("[1] 헌혈 요청글 작성");
             System.out.println("[2] 요청 전체 목록 조회");
             System.out.println("[3] 요청 대기 목록 조회");
-            System.out.println("[4] 요청 상태 변경");
-            System.out.println("[5] 요청 취소");
-            System.out.println("[6] 이전 메뉴");
+            System.out.println("[4] 본인의 요청 목록 조회");
+            System.out.println("[5] 요청 상태 변경");
+            System.out.println("[6] 요청 취소");
+            System.out.println("[7] 이전 메뉴");
             System.out.print("메뉴 선택 >");
             int rmenu = scan.nextInt();
             if(rmenu == 1){rListAdd();}
             else if(rmenu == 2){rListCheck();}
             else if(rmenu == 3){rWaitListCheck();}
-            else if(rmenu == 4){rListUpdate();}
-            else if(rmenu == 5){rListDelete();}
-            else if(rmenu == 6){break;}
+            else if(rmenu == 4){rMyListCheck();}
+            else if(rmenu == 5){rListUpdate();}
+            else if(rmenu == 6){rListDelete();}
+            else if(rmenu == 7){break;}
             else{System.out.println("잘못된 번호입니다.");}
         }
     }
@@ -443,8 +445,20 @@ public class MainView {
         for (RequestDto list: rlist ) { System.out.println(list);}
     }
 
+    // 본인의 요청 목록 조회
+    public void rMyListCheck() {
+        ArrayList<RequestDto> rlist = rc.rMyListCheck();
+        System.out.println("========== 회원님의 요청 목록 ===========");
+        if(rlist.isEmpty()) {
+            System.out.println("요청 목록이 없습니다.");
+            return;
+        }
+        for (RequestDto list: rlist ) { System.out.println(list);}
+    }
+
     // 요청 상태 변경
     public void rListUpdate() {
+        rMyListCheck();
         System.out.print("변경하고 싶은 요청 목록의 ID를 입력해주세요.");
         int request_id = scan.nextInt();
         System.out.print("변경할 카테고리를 선택하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 [5] 수량 >");
@@ -459,6 +473,7 @@ public class MainView {
 
     // 요청 목록 삭제
     public void rListDelete(){
+        rMyListCheck();
         System.out.print("삭제하고 싶은 요청 목록의 ID를 입력해주세요.");
         int request_id = scan.nextInt();
         if(rc.rListDelete(request_id)) { 
