@@ -21,6 +21,7 @@ public class BloodPackDao extends BaseDao{
     public int bloodCreate(BloodPackDto dto) {
       try {
         int memberId = mec.getLoginMember().getMember_id();
+        // 오토커밋끄기 수동설정(이유: sql문이 자동 저장되기때문에)
           conn.setAutoCommit(false);
           
 
@@ -117,6 +118,7 @@ public class BloodPackDao extends BaseDao{
           return 1;
 
       } catch (SQLException e) {
+        // rollback 예외처리
           try {
               conn.rollback();
           } catch (SQLException rollbackException) {
