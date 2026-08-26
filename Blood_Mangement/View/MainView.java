@@ -153,7 +153,7 @@ public class MainView {
 
     // 혈액팩 정보 삭제
     public void bloodDelete() {
-      ArrayList<BloodPackDto> list = bpc.myBloodPrint(loginMember.getMember_id());
+      ArrayList<BloodPackDto> list = bpc.myBloodPrint();
 
       if (list.isEmpty()) {
         System.out.println("등록된 혈액팩이 없습니다.");
@@ -173,8 +173,7 @@ public class MainView {
       int bloodPackId = scan.nextInt();
 
       boolean result = bpc.bloodDelete(
-          bloodPackId,
-          loginMember.getMember_id()
+          bloodPackId
       );
 
       System.out.println(result ? "삭제 성공" : "삭제 실패");

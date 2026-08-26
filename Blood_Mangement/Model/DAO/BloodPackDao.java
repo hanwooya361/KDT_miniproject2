@@ -20,8 +20,9 @@ public class BloodPackDao extends BaseDao{
     // [1] 혈액팩 등록
     public int bloodCreate(BloodPackDto dto) {
       try {
+        int memberId = mec.getLoginMember().getMember_id();
           conn.setAutoCommit(false);
-          int memberId = mec.getLoginMember().getMember_id();
+          
 
           // 1. 최근 2개월 이내 등록 이력 확인
           String checkSql =
@@ -161,7 +162,8 @@ public class BloodPackDao extends BaseDao{
     }
 
     // 개별 혈액팩 조회 
-    public ArrayList<BloodPackDto> myBloodPrint(int memberId) {
+    public ArrayList<BloodPackDto> myBloodPrint() {
+        int memberId = mec.getLoginMember().getMember_id();
       ArrayList<BloodPackDto> bloodList = new ArrayList<>();
 
       String sql =
@@ -247,7 +249,8 @@ public class BloodPackDao extends BaseDao{
         return 0;
     }
     // [6] 혈액팩 정보 삭제
-    public boolean bloodDelete(int bloodPackId, int memberId) {
+    public boolean bloodDelete(int bloodPackId) {
+        int memberId = mec.getLoginMember().getMember_id();
       try {
           String sql =
               "DELETE bp " +
