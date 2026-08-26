@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import Blood_Mangement.Controller.MemberController;
 import Blood_Mangement.Model.DTO.RequestDto;
 
 public class RequestDao extends BaseDao {
@@ -14,14 +15,15 @@ public class RequestDao extends BaseDao {
     public static RequestDao getInstance() { return instance; }
 
     private ArrayList<RequestDto> rList = new ArrayList<>();
+    private MemberController mc = MemberController.getInstance();
 
     // 멤버 아이디 찾기
-    public int findMemberId(String name) {
+    public int findMemberId(String login_id) {
         try {
-            String sql = "SELECT member_id FROM member WHERE name = ?";
-
+            String sql = "SELECT member_id FROM member WHERE login_id = ?";
+            
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, name);
+            ps.setString(1, login_id);
 
             ResultSet rs = ps.executeQuery();
 
@@ -41,8 +43,7 @@ public class RequestDao extends BaseDao {
             String sql = "insert into transfusion_request( request_type, requester_id, patient_name, hospital_name, blood_type, requested_quantity, deadline, created_at) values(?, ?, ?, ?, ?, ?, ?, ? )";
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setString(1, requestDto.getRequest_type());
-            int memberId = findMemberId(requestDto.getMember_name());
-            ps.setInt(2, memberId);
+            ps.setInt(2, findMemberId(mc.getLoginMember().getLogin_id() ) );
             ps.setString(3, requestDto.getPatient_name());
             ps.setString(4, requestDto.getHospital_name());
             ps.setString(5, requestDto.getBlood_type());
@@ -80,7 +81,7 @@ public class RequestDao extends BaseDao {
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ResultSet rs = ps.executeQuery();
-
+            rList.clear(); // 초기화
             // 가져온거 list에 넣기
             while(rs.next()){
                 rList.add(new RequestDto(

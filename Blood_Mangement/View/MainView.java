@@ -392,9 +392,6 @@ public class MainView {
         System.out.print("요청 타입(지정헌혈/혈액요청) > "); 
         String request_type = scan.next();
 
-        System.out.print("회원 이름 >");
-        String member_name = scan.next();
-
         System.out.print("환자 이름 >");
         String patient_name = scan.next();
 
@@ -412,7 +409,7 @@ public class MainView {
         LocalDate deadline = LocalDate.parse(deadline1);
         LocalDate created_at = LocalDate.now();
         
-        RequestDto requestDto = new RequestDto(request_type, member_name, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
+        RequestDto requestDto = new RequestDto(request_type, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
         if (rc.rListAdd(requestDto)) {
             System.out.println("[안내] 요청글 등록 성공");
         } 

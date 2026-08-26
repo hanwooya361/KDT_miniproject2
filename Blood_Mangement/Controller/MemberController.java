@@ -25,6 +25,10 @@ public class MemberController {
     // 현재 로그인한 회원<<<<<<<현재 로그인한 회원 가져다 쓰기
     private MemberDto loginMember = null;
 
+    public MemberDto getLoginMember(){
+        return loginMember;
+    }
+
     // 로그인
     public boolean mLogin(String login_id, String password){
         MemberDto memberDto = med.mLogin(login_id, password);

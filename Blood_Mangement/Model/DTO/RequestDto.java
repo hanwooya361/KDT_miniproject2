@@ -14,11 +14,11 @@ public class RequestDto {
     private String status;
 
 
+
     public RequestDto() {}
     // 추가용 생성자
-    public RequestDto( String request_type, String member_name, String patient_name, String hospital_name, String blood_type, int requested_quantity, LocalDate deadline, LocalDate created_at){
+    public RequestDto( String request_type, String patient_name, String hospital_name, String blood_type, int requested_quantity, LocalDate deadline, LocalDate created_at){
         this.request_type = request_type;
-        this.member_name = member_name;
         this.patient_name = patient_name;
         this.hospital_name = hospital_name;
         this.blood_type = blood_type;
@@ -44,11 +44,11 @@ public class RequestDto {
     public String getRequest_type() {
         return request_type;
     }
-    public String getMember_name() {
-        return member_name;
-    }
     public String getPatient_name() {
         return patient_name;
+    }
+    public String getMember_name() {
+        return member_name;
     }
     public String getHospital_name() {
         return hospital_name;
@@ -72,11 +72,11 @@ public class RequestDto {
     public void setRequest_type(String request_type) {
         this.request_type = request_type;
     }
-    public void setMember_name(String member_name) {
-        this.member_name = member_name;
-    }
     public void setPatient_name(String patient_name) {
         this.patient_name = patient_name;
+    }
+    public void setMember_name(String member_name) {
+        this.member_name = member_name;
     }
     public void setHospital_name(String hospital_name) {
         this.hospital_name = hospital_name;
