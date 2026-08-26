@@ -3,6 +3,8 @@ package Blood_Mangement.Model.DAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+
+import Blood_Mangement.Controller.MemberController;
 import Blood_Mangement.Model.DTO.MatchingDto;
 
 
@@ -10,6 +12,7 @@ public class MatchingDao extends BaseDao {
     private MatchingDao( ){ }
     private static final MatchingDao instance = new MatchingDao( );
     public static MatchingDao getInstance( ){ return instance; }
+    private MemberController mc = MemberController.getInstance();
 
     // [API19] 출고 가능 여부 검사 shipmentCheck( )
         public boolean shipmentCheck( int request_id , int blood_pack_id ){
@@ -172,6 +175,23 @@ public class MatchingDao extends BaseDao {
             
 
             } // shipmentDelete end
+
+            public boolean checkAdmin() {
+                try{ String sql = "select member_type from member where member_id = ?";
+                PreparedStatement ps1 = conn.prepareStatement(sql);
+                ps1.setInt(1, mc.getLoginMember().getMember_id()) ;
+
+                ResultSet rs = ps1.executeQuery();
+                if(rs.next()){
+                    if( rs.getString("member_type").equals("관리자") ) {
+                    return true;
+                }
+                }
+                
+                }catch( Exception e ){ System.out.println( e ); 
+                }
+                return false;
+            }
 
 } // class end
 

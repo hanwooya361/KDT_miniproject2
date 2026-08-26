@@ -265,6 +265,7 @@ public class MainView {
         String login_id = scan.next();
         MemberDto minlist = mec.minView(login_id);
         System.out.println("========== 회원 목록 ===========");
+        System.out.println("조회할 아이디: ");
         if (minlist == null) {
             System.out.println("목록이 존재하지 않습니다.");
             return;
@@ -483,12 +484,18 @@ public class MainView {
         else { System.out.println("삭제 실패");}
     }
 
-
+    public boolean checkAdmin() {
+        return mc.checkAdmin();
+    }
     
 
     // ==================== 혈액 출고 및 매칭 관리 ====================
     public void matchingMenu( ){
         while( true ){
+            if ( !checkAdmin() ) { 
+                System.out.println("관리자가 아닙니다.");
+                break; 
+            }
             System.out.println( "==========================" );
             System.out.println( "  혈액 출고 및 매칭 관리   " );
             System.out.println( "==========================" );

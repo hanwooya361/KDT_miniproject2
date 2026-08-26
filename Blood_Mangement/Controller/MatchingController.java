@@ -41,4 +41,8 @@ import Blood_Mangement.Model.DTO.MatchingDto;
                 return matchingDao.shipmentDelete( matchingDto );
             } // shipmentDelete end
 
+            public boolean checkAdmin() {
+                return matchingDao.checkAdmin();
+            }
+
 } // class end
