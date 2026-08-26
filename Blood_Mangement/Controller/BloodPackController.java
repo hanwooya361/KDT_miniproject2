@@ -24,8 +24,8 @@ public class BloodPackController {
     }
 
     // 개인조회 컨트롤러
-    public ArrayList<BloodPackDto> myBloodPrint(int memberId) {
-      return bpd.myBloodPrint(memberId);
+    public ArrayList<BloodPackDto> myBloodPrint() {
+      return bpd.myBloodPrint();
     }
 
     // [3] 잔여 혈액팩 조회 컨트롤러
@@ -44,8 +44,8 @@ public class BloodPackController {
     }
 
     // [6] 혈액팩 정보 삭제 컨트롤러
-    public boolean bloodDelete(int blood_pack_id, int memberId){
-        return bpd.bloodDelete(blood_pack_id, memberId);
+    public boolean bloodDelete(int blood_pack_id){
+        return bpd.bloodDelete(blood_pack_id);
     }
 
 }
