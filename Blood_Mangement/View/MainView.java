@@ -431,7 +431,7 @@ public void ddelete() {
         System.out.print("요청 수량 >");
         int requested_quantity = scan.nextInt();
 
-        System.out.println("기한 >");
+        System.out.print("기한 >");
         String deadline1 = scan.next();
         LocalDate deadline = LocalDate.parse(deadline1);
         LocalDate created_at = LocalDate.now();
