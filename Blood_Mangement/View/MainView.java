@@ -207,15 +207,15 @@ public class MainView {
 
     // [1] 회원가입
     public void mAdd() {
-        System.out.println("아이디를 입력하세요");
+        System.out.print("아이디를 입력하세요 >");
         String login_id = scan.next();
-        System.out.println("이름을 입력하세요");
+        System.out.print("이름을 입력하세요 >");
         String name = scan.next();
-        System.out.println("전화번호를 입력하세요");
+        System.out.print("전화번호를 입력하세요 >");
         String phone = scan.next();
-        System.out.println("회원 유형을 선택하세요(헌혈자/수혈자)");
+        System.out.print("회원 유형을 선택하세요(헌혈자/수혈자) >");
         String member_type = scan.next();
-        System.out.println("비밀번호를 입력하세요");
+        System.out.print("비밀번호를 입력하세요 >");
         String password = scan.next();
 
         MemberDto memberDto = new MemberDto(login_id, name, phone, member_type, password);
@@ -229,9 +229,9 @@ public class MainView {
 
     // [2] 헌혈자 로그인
     public void mLogin(){
-        System.out.println("아이디를 입력하세요");
+        System.out.print("아이디를 입력하세요 >");
         String login_id = scan.next();
-        System.out.println("비밀번호를 입력하세요");
+        System.out.print("비밀번호를 입력하세요 >");
         String password = scan.next();
         if (mec.mLogin(login_id, password)) {
 
@@ -262,7 +262,7 @@ public class MainView {
     // [4] 헌혈자 개별 조회
     public void minView(){
         System.out.println("========== 회원 목록 ===========");
-        System.out.println("조회할 아이디: ");
+        System.out.print("조회할 아이디 >");
         String login_id = scan.next();
         MemberDto minlist = mec.minView(login_id);
         if (minlist == null) {
@@ -276,10 +276,10 @@ public class MainView {
     }
     // [5] 헌혈자 정보 수정
     public void mUpdate(){
-        System.out.println("변경하고 싶은 아이디 입력: "); String oldLoginid = scan.next();
-        System.out.println("변경할 번호를 선택하세요. [1]아이디 [2]비밀번호 [3]이름 [4]폰번호 [5]가입유형");
+        System.out.print("변경하고 싶은 아이디 입력 >"); String oldLoginid = scan.next();
+        System.out.print("변경할 번호를 선택하세요. [1]아이디 [2]비밀번호 [3]이름 [4]폰번호 [5]가입유형 >");
         int ch = scan.nextInt();
-        System.out.println("변경내용을 작성하세요: "); String value = scan.next();
+        System.out.print("변경내용을 작성하세요 >"); String value = scan.next();
         // Controller 호출
         boolean result = mec.mUpdate(oldLoginid, ch, value);
         
@@ -294,7 +294,7 @@ public class MainView {
     public void donationMenu() {
         System.out.println("\n========== 헌혈 이력 관리 ===========");
         System.out.println("[1] 헌혈 이력 수정  [2] 헌혈 이력 삭제");
-        System.out.print("선택: ");
+        System.out.print("선택 >");
         int ch = scan.nextInt();
 
         if (ch == 1) {
@@ -307,7 +307,7 @@ public class MainView {
     }
     public void dUpdate() {
     System.out.println("\n========== 헌혈 이력 수정 ===========");
-    System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력: ");
+    System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력 >");
     String login_id = scan.next();
 
     // 1. 사전 검증: 기존 회원 및 헌혈 이력 정보 조회
@@ -343,7 +343,7 @@ public class MainView {
 // [6-2] 헌혈 이력 삭제 View
 public void ddelete() {
     System.out.println("\n========== 헌혈 이력 삭제 ===========");
-    System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력: ");
+    System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력 >");
     String login_id = scan.next();
 
     // 1. 사전 검증
@@ -373,8 +373,8 @@ public void ddelete() {
     // [7] 회원 탈퇴
     public void mdelete(){
         System.out.println("\n========== 회원 탈퇴 ===========");
-        System.out.print("탈퇴할 회원의 아이디 입력: "); String login_id = scan.next();
-        System.out.println("비밀번호 확인: "); String password = scan.next();
+        System.out.print("탈퇴할 회원의 아이디 입력 >"); String login_id = scan.next();
+        System.out.print("비밀번호 확인 >"); String password = scan.next();
 
         if(mec.mdelete(login_id, password)){
             System.out.println("회원 탈퇴 성공");
@@ -487,7 +487,7 @@ public void ddelete() {
         int request_id = scan.nextInt();
         System.out.print("변경할 카테고리를 선택하세요 [1] 혈액형 [2] 환자이름 [3] 병원이름 [4] 기한 [5] 수량 >");
         int ch = scan.nextInt();
-        System.out.print("변경할 정보를 입력하세요");
+        System.out.print("변경할 정보를 입력하세요 >");
         String value = scan.next();
         if(rc.rListUpdate(request_id, ch, value)) { 
             System.out.println("수정 성공");
@@ -498,7 +498,7 @@ public void ddelete() {
     // 요청 목록 삭제
     public void rListDelete(){
         rMyListCheck();
-        System.out.print("삭제하고 싶은 요청 목록의 ID를 입력해주세요.");
+        System.out.print("삭제하고 싶은 요청 목록의 ID를 입력해주세요 >");
         int request_id = scan.nextInt();
         if(rc.rListDelete(request_id)) { 
             System.out.println("삭제 성공");
