@@ -95,7 +95,7 @@ public class MainView {
       BloodPackDto dto = new BloodPackDto();
       dto.setBlood_type(bloodType);
 
-      int result = bpc.bloodCreate(dto,loginMember.getMember_id());
+    int result = bpc.bloodCreate(dto);
 
       if (result == 1) {
           System.out.println("혈액팩 등록 성공");

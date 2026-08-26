@@ -13,8 +13,8 @@ public class BloodPackController {
     private BloodPackDao bpd = BloodPackDao.getInstance();
 
     // [1] 등록 컨트롤러
-    public int bloodCreate(BloodPackDto BloodPackDto, int memberId){
-        return bpd.bloodCreate(BloodPackDto, memberId);
+    public int bloodCreate(BloodPackDto BloodPackDto){
+        return bpd.bloodCreate(BloodPackDto);
     }
 
     // [2] 전체조회 컨트롤러

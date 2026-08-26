@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Statement;
 
+import Blood_Mangement.Controller.MemberController;
 import Blood_Mangement.Model.DTO.BloodPackDto;
 
 public class BloodPackDao extends BaseDao{
@@ -14,11 +15,13 @@ public class BloodPackDao extends BaseDao{
     public static BloodPackDao getInstance(){return instance;}
     // 싱글톤
     private BloodPackDao bpd = BloodPackDao.getInstance();
+    private MemberController mec = MemberController.getInstance();
 
     // [1] 혈액팩 등록
-    public int bloodCreate(BloodPackDto dto, int memberId) {
+    public int bloodCreate(BloodPackDto dto) {
       try {
           conn.setAutoCommit(false);
+          int memberId = mec.getLoginMember().getMember_id();
 
           // 1. 최근 2개월 이내 등록 이력 확인
           String checkSql =
