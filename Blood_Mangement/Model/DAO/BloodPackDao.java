@@ -23,16 +23,20 @@ public class BloodPackDao extends BaseDao{
     public int bloodCreate(BloodPackDto dto) {
       try {
         int memberId = mec.getLoginMember().getMember_id();
-        // 오토커밋끄기 수동설정(이유: sql문이 자동 저장되기때문에)
+        // 오토커밋끄기 수동설정
+        // 이유: JDBC는 SQL을 실행할때마다 자동으로 COMMIT함 하지만 혈액팩 등록을 하기위해선 순차적 처리가 이루어져야하기때문에
+        // 오토커밋을 끄고 나중에 INSERT문이 있을때 앞에 작성한 SQL문에 아무 문제가 없다면 오토커밋을 TRUE로 수동 설정
           conn.setAutoCommit(false);
           
 
           // 1. 최근 2개월 이내 등록 이력 확인
+          // 현재회원의 헌혈이력db중 헌혈이력일이 현재 날짜 기준인 데이터가 있는지 확인
           String checkSql =
               "SELECT donation_id " +
               "FROM donation_history " +
               "WHERE member_id = ? " +
-              "AND donation_date >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH) " +
+              // curdate(): 현재날짜 / INTERVAL: sql에서 날짜나 시간에 기간을 더하거나 뺄때 사용하는 문법 
+              "AND donation_date >= DATE_SUB(CURDATE(), INTERVAL  2 MONTH) " +
               "LIMIT 1";
 
           try (PreparedStatement ps = conn.prepareStatement(checkSql)) {
@@ -47,7 +51,7 @@ public class BloodPackDao extends BaseDao{
 
           // 2. 기존 헌혈 이력 중 가장 최근 donation_id 조회
           int donationId = 0;
-
+          // 헌혈이력db 테이블에서 회원의 헌혈 이력만 검색 헌혈이력일과 헌혈번호를 내림차순으로 정리
           String findSql =
               "SELECT donation_id " +
               "FROM donation_history " +
@@ -85,10 +89,11 @@ public class BloodPackDao extends BaseDao{
                   "INSERT INTO donation_history " +
                   "(member_id, donation_date) " +
                   "VALUES (?, CURDATE())";
-
+            // insert후 자동으로 생성된 헌혈이력번호를 가져오기 위해서  Statement.RETURN_GENERATED_KEYS를 사용
               try (PreparedStatement ps = conn.prepareStatement(insertDonationSql,Statement.RETURN_GENERATED_KEYS)) {
                   ps.setInt(1, memberId);
                   ps.executeUpdate();
+                  // insert로 새로 생성된 pk를 가져옴
                   try (ResultSet rs = ps.getGeneratedKeys()) {
                       if (rs.next()) {
                           donationId = rs.getInt(1);
@@ -109,7 +114,7 @@ public class BloodPackDao extends BaseDao{
           try (PreparedStatement ps = conn.prepareStatement(bloodPackSql)) {
               ps.setString(1, dto.getBlood_type());
               ps.setInt(2, donationId);
-
+            // 만약 1개가 insert가 되지않으면 롤백
               if (ps.executeUpdate() != 1) {
                   conn.rollback();
                   return -1;
