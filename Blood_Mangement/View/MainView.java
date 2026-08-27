@@ -207,35 +207,41 @@ public class MainView {
 
     // [1] 회원가입
     public void mAdd() {
-        System.out.print("아이디를 입력하세요 >");
+        System.out.println("==========================");
+        System.out.println("[ 회원가입 ]");
+        System.out.println("==========================");
+        System.out.print("아이디를 입력하세요 : ");
         String login_id = scan.next();
-        System.out.print("이름을 입력하세요 >");
+        System.out.print("이름을 입력하세요 : ");
         String name = scan.next();
-        System.out.print("전화번호를 입력하세요 >");
+        System.out.print("전화번호를 입력하세요 : ");
         String phone = scan.next();
-        System.out.print("회원 유형을 선택하세요(헌혈자/수혈자) >");
+        System.out.print("회원 유형을 선택하세요(헌혈자/수혈자) : ");
         String member_type = scan.next();
-        System.out.print("비밀번호를 입력하세요 >");
+        System.out.print("비밀번호를 입력하세요 : ");
         String password = scan.next();
 
         MemberDto memberDto = new MemberDto(login_id, name, phone, member_type, password);
         if( mec.mAdd(memberDto) ){
-            System.out.println("회원가입 성공");
+            System.out.println("[회원가입 성공]");
         }
         else {
-            System.out.println("회원가입 실패");
+            System.out.println("[회원가입 실패]");
         }
     }
 
     // [2] 헌혈자 로그인
     public void mLogin(){
-        System.out.print("아이디를 입력하세요 >");
+        System.out.println("==========================");
+        System.out.println("[ 로그인 ]");
+        System.out.println("==========================");
+        System.out.print("아이디를 입력하세요 : ");
         String login_id = scan.next();
-        System.out.print("비밀번호를 입력하세요 >");
+        System.out.print("비밀번호를 입력하세요 : ");
         String password = scan.next();
         if (mec.mLogin(login_id, password)) {
             loginMember = mec.getLoginMember();
-            System.out.println("로그인 성공");
+            System.out.println("[로그인 성공]");
             System.out.println("회원번호 : " + loginMember.getMember_id());
             System.out.println("회원이름 : " + loginMember.getName());
             mainMenu();
@@ -250,7 +256,7 @@ public class MainView {
         ArrayList<MemberDto> mlist = mec.mView();
         System.out.println("========== 회원 목록 ===========");
         if(mlist.isEmpty()){
-            System.out.println("목록이 존재하지 않습니다.");
+            System.out.println("[목록이 존재하지 않습니다]");
             return;
         }
         for (MemberDto listm : mlist) {
@@ -260,35 +266,32 @@ public class MainView {
     // [4] 헌혈자 개별 조회
     public void minView(){
         System.out.println("========== 회원 목록 ===========");
-<<<<<<< HEAD
         System.out.println("조회할 아이디: ");
-=======
-        System.out.print("조회할 아이디 >");
->>>>>>> 53c2e218c544848f25b778b58a5a2140de0d1996
         String login_id = scan.next();
         MemberDto minlist = mec.minView(login_id);
         if (minlist == null) {
-            System.out.println("목록이 존재하지 않습니다.");
+            System.out.println("[목록이 존재하지 않습니다]");
             return;
         }
         System.out.println("아이디 : " + minlist.getLogin_id());
         System.out.println("이름 : " + minlist.getName());
         System.out.println("전화번호 : " + minlist.getPhone());
         System.out.println("회원구분 : " + minlist.getMember_type());
-    }
+        System.out.println("=========================");
+    }   
     // [5] 헌혈자 정보 수정
     public void mUpdate(){
-        System.out.print("변경하고 싶은 아이디 입력 >"); String oldLoginid = scan.next();
+        System.out.print("변경하고 싶은 아이디 입력 : "); String oldLoginid = scan.next();
         System.out.print("변경할 번호를 선택하세요. [1]아이디 [2]비밀번호 [3]이름 [4]폰번호 [5]가입유형 >");
         int ch = scan.nextInt();
-        System.out.print("변경내용을 작성하세요 >"); String value = scan.next();
+        System.out.print("변경내용을 작성하세요 : "); String value = scan.next();
         // Controller 호출
         boolean result = mec.mUpdate(oldLoginid, ch, value);
         
         if (result) {
-            System.out.println("수정 성공");
+            System.out.println("[수정 성공]");
         } else {
-            System.out.println("수정 실패 (아이디를 찾을 수 없거나 올바르지 않은 번호입니다.)");
+            System.out.println("[실패 (아이디를 찾을 수 없거나 올바르지 않은 번호입니다.)]");
         }
     }
     // [6] 헌혈이력 수정/삭제
@@ -304,25 +307,25 @@ public class MainView {
         } else if (ch == 2) {
             ddelete();  // 헌혈 이력 삭제 메소드 호출
         } else {
-            System.out.println("잘못된 입력입니다.");
+            System.out.println("[잘못된 입력입니다]");
         }
     }
     public void dUpdate() {
     System.out.println("\n========== 헌혈 이력 수정 ===========");
-    System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력 >");
+    System.out.print("헌혈 날짜를 수정할 회원의 아이디 입력 : ");
     String login_id = scan.next();
 
     // 1. 사전 검증: 기존 회원 및 헌혈 이력 정보 조회
     MemberDto checkMember = mec.minView(login_id);
 
     if (checkMember == null) {
-        System.out.println(">> 존재하지 않는 회원 아이디입니다.");
+        System.out.println("[존재하지 않는 회원 아이디입니다]");
         return;
     }
 
     // 헌혈 이력(donation_date)이 null인 경우 수정 불가 처리
     if (checkMember.getDonation_date() == null) {
-        System.out.println(">> 해당 회원은 등록된 헌혈 이력이 없습니다. (수정 불가)");
+        System.out.println("[해당 회원은 등록된 헌혈 이력이 없습니다. (수정 불가)]");
         return;
     }
 
@@ -336,26 +339,26 @@ public class MainView {
 
     // 3. Controller 호출
     if (mec.dUpdate(memberDto)) {
-        System.out.println(">> 헌혈 이력 수정 성공!");
+        System.out.println("[헌혈 이력 수정 성공]");
     } else {
-        System.out.println(">> 헌혈 이력 수정 실패");
+        System.out.println("[헌혈 이력 수정 실패]");
     }
 }
 
 // [6-2] 헌혈 이력 삭제 View
 public void ddelete() {
     System.out.println("\n========== 헌혈 이력 삭제 ===========");
-    System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력 >");
+    System.out.print("헌혈 이력을 삭제할 회원의 아이디 입력 : ");
     String login_id = scan.next();
 
     // 1. 사전 검증
     MemberDto checkMember = mec.minView(login_id);
     if (checkMember == null) {
-        System.out.println(">> 존재하지 않는 회원 아이디입니다.");
+        System.out.println("[존재하지 않는 회원 아이디입니다]");
         return;
     }
     if (checkMember.getDonation_date() == null) {
-        System.out.println(">> 해당 회원은 삭제할 헌혈 이력이 없습니다.");
+        System.out.println("[해당 회원은 삭제할 헌혈 이력이 없습니다]");
         return;
     }
     // 2. 이력이 존재할 때만 삭제 진행
@@ -363,12 +366,12 @@ public void ddelete() {
     int confirm = scan.nextInt();
     if (confirm == 1) {
         if (mec.ddelete(login_id)) {
-            System.out.println(">> 헌혈 이력 삭제 완료");
+            System.out.println("[헌혈 이력 삭제 완료]");
         } else {
-            System.out.println(">> 헌혈 이력 삭제 실패");
+            System.out.println("[헌혈 이력 삭제 실패]");
         }
     } else {
-        System.out.println(">> 삭제가 취소되었습니다.");
+        System.out.println("[삭제가 취소되었습니다]");
     }
 }
     
@@ -379,9 +382,9 @@ public void ddelete() {
         System.out.print("비밀번호 확인 >"); String password = scan.next();
 
         if(mec.mdelete(login_id, password)){
-            System.out.println("회원 탈퇴 성공");
+            System.out.println("[회원 탈퇴 성공]");
         }
-        else{System.out.println("비밀번호가 일치하지 않습니다.");}
+        else{System.out.println("[비밀번호가 일치하지 않습니다]");}
     }
 
 
@@ -408,7 +411,7 @@ public void ddelete() {
             else if(rmenu == 5){rListUpdate();}
             else if(rmenu == 6){rListDelete();}
             else if(rmenu == 7){break;}
-            else{System.out.println("잘못된 번호입니다.");}
+            else{System.out.println("[잘못된 번호입니다]");}
         }
     }
 
@@ -441,10 +444,10 @@ public void ddelete() {
         
         RequestDto requestDto = new RequestDto(request_type, patient_name, hospital_name, blood_type, requested_quantity, deadline,created_at);
         if (rc.rListAdd(requestDto)) {
-            System.out.println("[안내] 요청글 등록 성공");
+            System.out.println("[요청글 등록 성공]");
         } 
         else {
-            System.out.println("[오류] 요청글 등록 실패");
+            System.out.println("[요청글 등록 실패]");
         }
     }
 
@@ -453,7 +456,7 @@ public void ddelete() {
         ArrayList<RequestDto> rlist = rc.rListCheck();
         System.out.println("========== 요청 목록 ===========");
         if(rlist.isEmpty()) {
-            System.out.println("요청 목록이 없습니다.");
+            System.out.println("[요청 목록이 없습니다]");
             return;
         }
         for (RequestDto list: rlist ) { System.out.println(list);}
@@ -465,7 +468,7 @@ public void ddelete() {
         ArrayList<RequestDto> rlist = rc.rWaitListCheck();
         System.out.println("========== 요청 목록 ===========");
         if(rlist.isEmpty()) {
-            System.out.println("요청 목록이 없습니다.");
+            System.out.println("[요청 목록이 없습니다]");
             return;
         }
         for (RequestDto list: rlist ) { System.out.println(list);}
@@ -476,7 +479,7 @@ public void ddelete() {
         ArrayList<RequestDto> rlist = rc.rMyListCheck();
         System.out.println("========== 회원님의 요청 목록 ===========");
         if(rlist.isEmpty()) {
-            System.out.println("요청 목록이 없습니다.");
+            System.out.println("[요청 목록이 없습니다]");
             return;
         }
         for (RequestDto list: rlist ) { System.out.println(list);}
