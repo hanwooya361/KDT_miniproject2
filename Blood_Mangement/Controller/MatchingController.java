@@ -13,7 +13,7 @@ import Blood_Mangement.Model.DTO.MatchingDto;
         // [API18 , 19] 출고 가능 여부 확인 후 등록 Controller
         public boolean shipmentCreate( int request_id , int blood_pack_id) {
             // [API 19] 출고 가능 여부 검사
-            boolean result = matchingDao.shipmentCheck( request_id , blood_pack_id );
+            boolean result = matchingDao.shipmentCheck( request_id , blood_pack_id );   
             if ( !result ){
                 return false; 
             }
