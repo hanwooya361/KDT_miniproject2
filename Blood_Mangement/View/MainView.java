@@ -45,7 +45,7 @@ public class MainView {
     public void mainMenu() {
         while(true){
             System.out.println("\n==================================================");
-            System.out.println("               🩸혈액 관리 시스템🩸");
+            System.out.println("               [ 혈액 관리 시스템 ]");
             System.out.println("==================================================");
             System.out.println("  [1] 혈액팩 재고 관리");
             System.out.println("  [2] 헌혈자 / 헌혈 이력 관리");
@@ -67,7 +67,7 @@ public class MainView {
         bpc.bloodUpdate();
         while (true){
             System.out.println("\n==================================================");
-            System.out.println("               🩸혈액 재고 관리");
+            System.out.println("               [ 혈액 재고 관리 ]");
             System.out.println("==================================================");
             System.out.println(" [1] 혈액팩 입고 ");
             System.out.println(" [2] 전체 혈액팩 조회");
@@ -184,11 +184,11 @@ public class MainView {
     public void memberMenu(){
         while (true){
             System.out.println("\n==================================================");
-            System.out.println("               🩸헌혈자 / 헌혈 이력 관리");
+            System.out.println("              [ 회원 / 헌혈 이력 관리 ]");
             System.out.println("==================================================");
-            System.out.println(" [1] 헌혈자 전체 조회");
-            System.out.println(" [2] 헌혈자 개별 조회");
-            System.out.println(" [3] 헌혈자 정보 수정");
+            System.out.println(" [1] 회원 전체 조회");
+            System.out.println(" [2] 회원 개별 조회");
+            System.out.println(" [3] 회원 정보 수정");
             System.out.println(" [4] 헌혈이력 정보 수정/삭제");
             System.out.println(" [5] 회원 탈퇴");
             System.out.println(" [6] 이전메뉴");
@@ -278,7 +278,8 @@ public class MainView {
         System.out.println("전화번호 : " + minlist.getPhone());
         System.out.println("회원구분 : " + minlist.getMember_type());
         System.out.println("=========================");
-    }   
+    }
+
     // [5] 헌혈자 정보 수정
     public void mUpdate(){
         System.out.print("변경하고 싶은 아이디 입력 : "); String oldLoginid = scan.next();
@@ -294,14 +295,13 @@ public class MainView {
             System.out.println("[실패 (아이디를 찾을 수 없거나 올바르지 않은 번호입니다.)]");
         }
     }
+
     // [6] 헌혈이력 수정/삭제
-    
     public void donationMenu() {
         System.out.println("\n========== 헌혈 이력 관리 ===========");
         System.out.println("[1] 헌혈 이력 수정  [2] 헌혈 이력 삭제");
         System.out.print("선택 >");
         int ch = scan.nextInt();
-
         if (ch == 1) {
             dUpdate();  // 헌혈 이력 수정 메소드 호출
         } else if (ch == 2) {
@@ -322,7 +322,6 @@ public class MainView {
         System.out.println("[존재하지 않는 회원 아이디입니다]");
         return;
     }
-
     // 헌혈 이력(donation_date)이 null인 경우 수정 불가 처리
     if (checkMember.getDonation_date() == null) {
         System.out.println("[해당 회원은 등록된 헌혈 이력이 없습니다. (수정 불가)]");
