@@ -51,15 +51,13 @@ public class MemberDao extends BaseDao {
     // 로그인 함수
     public MemberDto mLogin(String login_id, String password){
         try {
-            // SQL 작성: 입력받은 로그인,비번이 모두 일치하는 레코드 조회
             String sql = "SELECT * FROM member WHERE login_id = ? AND password = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, login_id);
-            ps.setString(2, password); // MemberDto에 getPassword()가 구현되어 있어야 합니다.
+            ps.setString(2, password);
             
             ResultSet rs = ps.executeQuery();
-            
-            // 결과 확인 (조회된 행이 1개라도 있으면 로그인 성공)
+
             if (rs.next()) {
                 MemberDto memberDto = new MemberDto();
                 memberDto.setMember_id(rs.getInt("member_id"));
@@ -82,7 +80,7 @@ public class MemberDao extends BaseDao {
         ArrayList<MemberDto> mlist = new ArrayList<>();
         try {
             String sql = "SELECT m.login_id, m.name, m.phone, m.member_type, dh.donation_date " +
-                     "FROM member m LEFT JOIN donation_history dh ON m.member_id = dh.member_id"; // 2.1 SQL 작성한다.
+                     "FROM member m LEFT JOIN donation_history dh ON m.member_id = dh.member_id"; 
             PreparedStatement ps = conn.prepareStatement( sql );
             ResultSet rs =  ps.executeQuery();
             
@@ -100,7 +98,7 @@ public class MemberDao extends BaseDao {
         } return mlist;
     }
 
-    // 매개변수로 조회할 login_id를 직접 입력받기
+    // 개별 회원 조회 (매개변수로 조회할 login_id를 직접 입력받기)
     public MemberDto minView(String login_id) {
         MemberDto memberDto = null; // 초기값을 null로 설정 (조회 결과 없을 때 구분용
         try {
@@ -156,7 +154,6 @@ public class MemberDao extends BaseDao {
     // 헌혈 이력 정보 수정
     public boolean dUpdate(MemberDto memberDto) {
         try {
-            // donation_history에 login_id가 없고 member_id만 FK로 연결되어 있는 경우 서브쿼리 활용
             String sql = "UPDATE donation_history dh " +
                         "JOIN member m ON dh.member_id = m.member_id " +
                         "SET dh.donation_date = ? WHERE m.login_id = ?";       
@@ -165,7 +162,7 @@ public class MemberDao extends BaseDao {
             ps.setString(2, memberDto.getLogin_id());
             
             int result = ps.executeUpdate();
-            ps.close(); // 자원 해제
+            ps.close(); 
             if (result >= 1) return true;
         } catch (SQLException e) {
             System.out.println("헌혈 이력 수정 오류: " + e.getMessage());

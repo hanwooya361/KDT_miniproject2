@@ -14,23 +14,15 @@ public class MemberController {
 
     // 가입
     public boolean mAdd(MemberDto memberDto) {
-    boolean check = med.logCheck(memberDto.getLogin_id());
-    // 가입실패
-    if (!check) { 
-        System.out.println("아이디가 이미 존재합니다.");
-        return false;
+        boolean check = med.logCheck(memberDto.getLogin_id());
+        // 가입실패
+        if (!check) { 
+            System.out.println("아이디가 이미 존재합니다.");
+            return false;
+        }
+        return med.mAdd(memberDto);
     }
-    return med.mAdd(memberDto);
-}
-    // 현재 로그인한 회원<<<<<<<현재 로그인한 회원 가져다 쓰기
-    private MemberDto loginMember = null;
 
-
-    // 현재 로그인한 회원 정보 반환
-    public MemberDto getLoginMember() {
-        return loginMember;
-    }
- 
     // 로그인
     public boolean mLogin(String login_id, String password){
         MemberDto memberDto = med.mLogin(login_id, password);
@@ -38,7 +30,12 @@ public class MemberController {
         return memberDto != null;
     }
 
-    
+    // 현재 로그인한 회원<<<<<<<현재 로그인한 회원 가져다 쓰기
+    private MemberDto loginMember = null;
+    // 현재 로그인한 회원 정보 반환
+    public MemberDto getLoginMember() {
+        return loginMember;
+    }
 
 
     // 전체조회
@@ -46,12 +43,10 @@ public class MemberController {
         ArrayList<MemberDto> result = med.mView();
         return result;
     }
-
     // 개별조회
     public MemberDto minView(String login_id){
         MemberDto result = med.minView(login_id);
         return result;
-
     }
 
     // 회원정보수정
